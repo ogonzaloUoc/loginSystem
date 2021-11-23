@@ -72,6 +72,7 @@ async function root(req, res) {
 async function register(req, res) {
     const successMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>"
     try{
+<<<<<<< HEAD
         let userExists = registeredUsers.find((data) => req.body.email === data.email); // Comprobamos si el email entrado en el formulario esta registrado
         if (!userExists) {            
             saveUser(req, registeredUsers);            
@@ -79,6 +80,27 @@ async function register(req, res) {
             return
         }
         res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");   
+=======
+        const FileSystem = require("fs"); // Comprobamos que tenemos acceso al sistema de archivos del ordenador
+        FileSystem.readFile('users.json', 'utf8', (err, data) => {
+            if(err){
+                registerUser(req, users);
+                res.send("<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>");
+                return;
+            } // No existe el archivo users.json o no lo podemos leer
+            users = JSON.parse(data); // Guardamos los contenidos del archivo users.json en el array users
+            users.forEach(user => {
+                console.log(`${user.username}: ${user.email}`);
+            });
+            let foundUser = users.find((data) => req.body.email === data.email); // Comprobamos si el email entrado en el formulario esta registrado
+            if (!foundUser) {            
+                registerUser(req, users);            
+                res.send("<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>");
+            } else {
+                res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");
+            }
+        }); // Intentamos leer el archivo del registro de usuarios      
+>>>>>>> master
     } catch{
         res.send("Registration failed: Internal server error");
     }
@@ -86,12 +108,18 @@ async function register(req, res) {
 
 async function login(req, res) {
     try{              
+<<<<<<< HEAD
         FileSystem.readFile(usersFileName, 'utf8', (err, data) => {
+=======
+        const FileSystem = require("fs"); // Comprobamos que tenemos acceso al sistema de archivos del ordenador
+        FileSystem.readFile('users.json', 'utf8', (err, data) => {
+>>>>>>> master
             if(err){
                 console.log(`Error reading file from disk: ${err}`); 
                 res.send(`<div align ='center'><h2>No user registry is available, please register.</h2></div><br><br><br><div align='center'><a href='./register.html'>Register</a></div>`);
                 return
             } // No se puede leer el archivo users.json
+<<<<<<< HEAD
             registeredUsers = JSON.parse(data); // Guardamos los contenidos del archivo users.json en el array users                
             let foundUser = registeredUsers.find((data) => req.body.email === data.email); // Comprobamos si el email entrado en el formulario esta registrado
             if (foundUser) {            
@@ -112,10 +140,54 @@ async function login(req, res) {
             } // El correo del formulario existe en nuestro registro
             
             res.send("<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align='center'><a href='./logIn.html'>login again<a><div>");
+=======
+            else {
+                users = JSON.parse(data); // Guardamos los contenidos del archivo users.json en el array users                
+                let foundUser = users.find((data) => req.body.email === data.email); // Comprobamos si el email entrado en el formulario esta registrado
+                if (foundUser) {            
+                    let submittedPass = req.body.password; 
+                    let storedPass = foundUser.password;
+                    const passwordMatches = bcrypt.compare(submittedPass, storedPass); 
+                    if (passwordMatches) {
+                        let username = foundUser.username;
+                        console.log(`logged in as: ${username}`);
+                        //req.session.user = foundUser;
+                        res.send(`<div align ='center'><h2>login successful</h2></div><br><br><br><div align ='center'><h3>Hello ${username}</h3></div><br><br><div align='center'><a href='./logIn.html'>logout</a></div>`);
+                    } // Coinciden las contraseñas - Login validado
+                    
+                    else {
+                        res.send("<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align ='center'><a href='./logIn.html'>login again</a></div>");
+                    } // No coinciden las contraseñas - Login fallido
+                } // El correo del formulario existe en nuestro registro
+                else {            
+                    res.send("<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align='center'><a href='./logIn.html'>login again<a><div>");
+                } // El correo del formulario no está registrado - Login fallido
+            } // Se puede leer el archivo de registro de usuarios
+>>>>>>> master
         }); // Intentamos leer el archivo del registro de usuarios
     } catch{
         res.send("Login failed: Internal server error");
     } // Mensaje de error
+<<<<<<< HEAD
+=======
+});
+
+async function registerUser(req, users) {
+    let hashPassword = await bcrypt.hash(req.body.password, 10);            
+    let newUser = {
+        id: Date.now(),
+        username: req.body.username,
+        email: req.body.email,
+        password: hashPassword,
+    };
+    
+    users.push(newUser);
+    console.log('User list', users);
+    const FileSystem = require("fs"); // Comprobamos que tenemos acceso al sistema de archivos del ordenador
+    FileSystem.writeFile('users.json', JSON.stringify(users), (err) => {
+        if (err) throw err; 
+    }); // Actualizamos o creamos el archivo de registro de usuarios users.json
+>>>>>>> master
 }
 
 async function saveUser(req, users) {
