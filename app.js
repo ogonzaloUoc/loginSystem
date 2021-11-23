@@ -26,6 +26,11 @@ app.use(session({
     saveUninitialized: false
   } )); // Valores de configuración de nuestra cookie de sesión
 
+
+function registerRoutes() {
+    
+}
+
 app.get('/',(req,res) => {
     res.sendFile(path.join(__dirname,'./public/logIn.html'));
 }); // Al cargar la página principal, mostramos el login
