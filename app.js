@@ -5,9 +5,9 @@ const path = require("path");
 const bodyParser = require('body-parser');
 const session = require('express-session'); // Librería para la gestión de sesiones de usuarios
 const FileSystem = require("fs");
+const { User } = require('./users');
 //const sessionOptions = require('./sessionOptions').sessionOptions;
 
-const usersFileName = 'users.json'
 var registeredUsers = [];
 
 const app = express();
@@ -32,10 +32,29 @@ function init() {
         resave: false,
         saveUninitialized: false
     } )); // Valores de configuración de nuestra cookie de sesión
+
+    loadUsers(registeredUsers)
+}
+
+function loadUsers() {
+    const usersFileName = 'users.json'
+
+    let file = FileSystem.getFile(usersFileName)
+    if (!file.exists()) {
+        FileSystem.writeFile(usersFileName, "{}")
+    }
+
+    FileSystem.readFile(usersFileName, 'utf8', (err, data) => {
+        registeredUsers = JSON.parse(data);
+    })
+
+    registeredUsers.forEach(user => {
+        console.log(`${user.username}: ${user.email}`)
+    })
 }
 
 function registerRoutes() {
-    app.get('/', home)
+    app.get('/', root)
     app.get('/register', register)
     app.get('/login', login)    
 }
@@ -46,33 +65,20 @@ function startListening() {
     });
 }
 
-async function home(req, res) {
-        res.sendFile(path.join(__dirname,'./public/logIn.html'));
+async function root(req, res) {
+        res.sendFile(path.join(__dirname,'./public/logIn.html'))
 }
 
 async function register(req, res) {
     const successMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>"
     try{
-        FileSystem.readFile(usersFileName, 'utf8', (err, data) => {
-            if(err){
-                saveUser(req, registeredUsers);
-                res.send(successMessage);
-                return
-            }
-
-            registeredUsers = JSON.parse(data); // Guardamos los contenidos del archivo users.json en el array users
-            registeredUsers.forEach(user => {
-                console.log(`${user.username}: ${user.email}`);
-            });
-            let foundUser = registeredUsers.find((data) => req.body.email === data.email); // Comprobamos si el email entrado en el formulario esta registrado
-            if (!foundUser) {            
-                saveUser(req, registeredUsers);            
-                res.send(successMessage);
-                return
-            }
-
-            res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");
-        });   
+        let userExists = registeredUsers.find((data) => req.body.email === data.email); // Comprobamos si el email entrado en el formulario esta registrado
+        if (!userExists) {            
+            saveUser(req, registeredUsers);            
+            res.send(successMessage);
+            return
+        }
+        res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");   
     } catch{
         res.send("Registration failed: Internal server error");
     }
@@ -113,16 +119,15 @@ async function login(req, res) {
 }
 
 async function saveUser(req, users) {
-    let hashPassword = await bcrypt.hash(req.body.password, 10);            
-    let newUser = {
-        id: Date.now(),
-        username: req.body.username,
-        email: req.body.email,
-        password: hashPassword,
-    };
+    let hashPassword = await bcrypt.hash(req.body.password, 10);
+    let newUser = new User(req.username, req.body.email, hashPassword);
+
     users.push(newUser);
-    console.log('User list', users);
     FileSystem.writeFile(usersFileName, JSON.stringify(users), (err) => {
-        if (err) throw err; 
-    }); // Actualizamos o creamos el archivo de registro de usuarios users.json
+        if (err) {
+            throw err
+        }
+    });
+
+    console.log(`New user registered: ${newUser.username}: ${newUser.email}`)
 }
