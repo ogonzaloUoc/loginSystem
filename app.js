@@ -4,18 +4,18 @@ const bcrypt = require('bcrypt'); // Encriptado de contraseñas
 const path = require("path");
 const bodyParser = require('body-parser');
 const session = require('express-session'); // Librería para la gestión de sesiones de usuarios
+const FileSystem = require("fs");
 //const sessionOptions = require('./sessionOptions').sessionOptions;
 
-var users = []; // Almacenará los usuarios registrados, obtenidos del archivo users.json
+const usersFileName = 'users.json'
+var registeredUsers = [];
 
 const app = express();
 const server = http.createServer(app);
 
 init()
 registerRoutes()
-server.listen(3000, function(){
-    console.log("server is listening on port: 3000");
-});
+startListening()
 
 function init() {
     app.use(bodyParser.urlencoded({extended: false}));
@@ -40,33 +40,39 @@ function registerRoutes() {
     app.get('/login', login)    
 }
 
+function startListening() {
+    server.listen(3000, function(){
+        console.log("server is listening on port: 3000");
+    });
+}
+
 async function home(req, res) {
         res.sendFile(path.join(__dirname,'./public/logIn.html'));
 }
 
 async function register(req, res) {
+    const successMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>"
     try{
-        const FileSystem = require("fs"); // Comprobamos que tenemos acceso al sistema de archivos del ordenador
-        FileSystem.readFile('users.json', 'utf8', (err, data) => {
+        FileSystem.readFile(usersFileName, 'utf8', (err, data) => {
             if(err){
-                registerUser(req, users);
-                res.send("<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>");
+                saveUser(req, registeredUsers);
+                res.send(successMessage);
                 return
             }
 
-            users = JSON.parse(data); // Guardamos los contenidos del archivo users.json en el array users
-            users.forEach(user => {
+            registeredUsers = JSON.parse(data); // Guardamos los contenidos del archivo users.json en el array users
+            registeredUsers.forEach(user => {
                 console.log(`${user.username}: ${user.email}`);
             });
-            let foundUser = users.find((data) => req.body.email === data.email); // Comprobamos si el email entrado en el formulario esta registrado
+            let foundUser = registeredUsers.find((data) => req.body.email === data.email); // Comprobamos si el email entrado en el formulario esta registrado
             if (!foundUser) {            
-                registerUser(req, users);            
-                res.send("<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>");
+                saveUser(req, registeredUsers);            
+                res.send(successMessage);
                 return
             }
 
             res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");
-        }); // Intentamos leer el archivo del registro de usuarios      
+        });   
     } catch{
         res.send("Registration failed: Internal server error");
     }
@@ -74,16 +80,14 @@ async function register(req, res) {
 
 async function login(req, res) {
     try{              
-        const FileSystem = require("fs"); // Comprobamos que tenemos acceso al sistema de archivos del ordenador
-
-        FileSystem.readFile('users.json', 'utf8', (err, data) => {
+        FileSystem.readFile(usersFileName, 'utf8', (err, data) => {
             if(err){
                 console.log(`Error reading file from disk: ${err}`); 
                 res.send(`<div align ='center'><h2>No user registry is available, please register.</h2></div><br><br><br><div align='center'><a href='./register.html'>Register</a></div>`);
                 return
             } // No se puede leer el archivo users.json
-            users = JSON.parse(data); // Guardamos los contenidos del archivo users.json en el array users                
-            let foundUser = users.find((data) => req.body.email === data.email); // Comprobamos si el email entrado en el formulario esta registrado
+            registeredUsers = JSON.parse(data); // Guardamos los contenidos del archivo users.json en el array users                
+            let foundUser = registeredUsers.find((data) => req.body.email === data.email); // Comprobamos si el email entrado en el formulario esta registrado
             if (foundUser) {            
                 let submittedPass = req.body.password; // Contraseña formulario login
                 let storedPass = foundUser.password; // Contraseña usuario registrado encontrado
@@ -108,7 +112,7 @@ async function login(req, res) {
     } // Mensaje de error
 }
 
-async function registerUser(req, users) {
+async function saveUser(req, users) {
     let hashPassword = await bcrypt.hash(req.body.password, 10);            
     let newUser = {
         id: Date.now(),
@@ -118,8 +122,7 @@ async function registerUser(req, users) {
     };
     users.push(newUser);
     console.log('User list', users);
-    const FileSystem = require("fs"); // Comprobamos que tenemos acceso al sistema de archivos del ordenador
-    FileSystem.writeFile('users.json', JSON.stringify(users), (err) => {
+    FileSystem.writeFile(usersFileName, JSON.stringify(users), (err) => {
         if (err) throw err; 
     }); // Actualizamos o creamos el archivo de registro de usuarios users.json
 }
