@@ -6,9 +6,10 @@ const bodyParser = require('body-parser');
 const session = require('express-session'); // Librería para la gestión de sesiones de usuarios
 const FileSystem = require("fs");
 const { User } = require('./users');
+const registeredUsersFile = 'users.json'
 //const sessionOptions = require('./sessionOptions').sessionOptions;
 
-var registeredUsers = [];
+var registeredUsersArray = [];
 
 const app = express();
 const server = http.createServer(app);
@@ -31,37 +32,42 @@ function init() {
         },
         resave: false,
         saveUninitialized: false
-    } )); // Valores de configuración de nuestra cookie de sesión
+    } ));
 
-    loadUsers(registeredUsers)
+    loadUsers()
 }
 
 function loadUsers() {
-    const usersFileName = 'users.json'
-
-    let file = FileSystem.getFile(usersFileName)
-    if (!file.exists()) {
-        FileSystem.writeFile(usersFileName, "{}")
-    }
-
-    FileSystem.readFile(usersFileName, 'utf8', (err, data) => {
-        registeredUsers = JSON.parse(data);
-    })
-
-    registeredUsers.forEach(user => {
-        console.log(`${user.username}: ${user.email}`)
-    })
+    FileSystem.stat(registeredUsersFile, (fileNotExists, _stats) => {
+        if (fileNotExists) {
+            FileSystem.writeFile(registeredUsersFile, '{}', (cantWriteFile) => {
+                if (cantWriteFile) {
+                    throw cantWriteFile
+                }
+            })
+        }    
+        FileSystem.readFile(registeredUsersFile, 'utf8', (cantReadFile, data) => {
+            if (cantReadFile) {
+                throw cantReadFile
+            }
+            registeredUsersArray = JSON.parse(data)
+            console.log('Usuarios registrados:\n')
+            registeredUsersArray.forEach(user => {
+                console.log(`\t${user.username}: ${user.email}`)
+            })
+        })   
+    })        
 }
 
 function registerRoutes() {
     app.get('/', root)
-    app.get('/register', register)
-    app.get('/login', login)    
+    app.post('/register', register)
+    app.post('/login', login)    
 }
 
 function startListening() {
     server.listen(3000, function(){
-        console.log("server is listening on port: 3000");
+        console.log("server is listening on port: 3000\n");
     });
 }
 
@@ -70,65 +76,65 @@ async function root(req, res) {
 }
 
 async function register(req, res) {
-    const successMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>"
+    const registerSuccessMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>"
+    const registerFailureMessage_EmailAlreadyExists = "<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>"
+    const registerFailureMessage_ServerError = "Registration failed: Internal server error"
+
     try{
-        let userExists = registeredUsers.find((data) => req.body.email === data.email); // Comprobamos si el email entrado en el formulario esta registrado
+        let userExists = registeredUsersArray.find((data) => req.body.email === data.email)
         if (!userExists) {            
-            saveUser(req, registeredUsers);            
-            res.send(successMessage);
+            saveUser(req, registeredUsersArray)            
+            res.send(registerSuccessMessage)
             return
         }
-        res.send("<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>");   
+        res.send(registerFailureMessage_EmailAlreadyExists)
 
     } catch{
-        res.send("Registration failed: Internal server error");
+        res.send(registerFailureMessage_ServerError)
     }
 }
 
 async function login(req, res) {
-    try{              
-        FileSystem.readFile(usersFileName, 'utf8', (err, data) => {
-            if(err){
-                console.log(`Error reading file from disk: ${err}`); 
-                res.send(`<div align ='center'><h2>No user registry is available, please register.</h2></div><br><br><br><div align='center'><a href='./register.html'>Register</a></div>`);
+    const loginFailureMessage_InvalidEmailOrPasswd = "<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align ='center'><a href='./logIn.html'>login again</a></div>"
+    const loginFailureMessage_ServerError = "Login failed: Internal server error"
+
+    try{           
+        let foundUser = registeredUsersArray.find((data) => req.body.email === data.email)
+
+        if (foundUser) {            
+            let submittedPass = req.body.password;
+            let storedPass = foundUser.password;
+    
+            const passwordsMatch = bcrypt.compare(submittedPass, storedPass); 
+
+            if (passwordsMatch) {
+                let username = foundUser.username;
+                console.log(`\nConectado como:\n\n\t${username}\n`);
+                //req.session.user = foundUser;
+                const loginSuccessMessage = `<div align ='center'><h2>login successful</h2></div><br><br><br><div align ='center'><h3>Hello ${username}</h3></div><br><br><div align='center'><a href='./logIn.html'>logout</a></div>`
+                res.send(loginSuccessMessage);
                 return
-            } // No se puede leer el archivo users.json
-            registeredUsers = JSON.parse(data); // Guardamos los contenidos del archivo users.json en el array users                
-            let foundUser = registeredUsers.find((data) => req.body.email === data.email); // Comprobamos si el email entrado en el formulario esta registrado
-            if (foundUser) {            
-                let submittedPass = req.body.password; // Contraseña formulario login
-                let storedPass = foundUser.password; // Contraseña usuario registrado encontrado
-        
-                const passwordMatch = bcrypt.compare(submittedPass, storedPass); // Comprobamos que la contraseña del formulario coincide con la del usuario registrado
-                if (passwordMatch) {
-                    let username = foundUser.username;
-                    console.log(`logged in as: ${username}`);
-                    //req.session.user = foundUser;
-                    res.send(`<div align ='center'><h2>login successful</h2></div><br><br><br><div align ='center'><h3>Hello ${username}</h3></div><br><br><div align='center'><a href='./logIn.html'>logout</a></div>`);
-                    return
-                } // Coinciden las contraseñas - Login validado
-            
-                res.send("<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align ='center'><a href='./logIn.html'>login again</a></div>");
-                return
-            } // El correo del formulario existe en nuestro registro
-            
-            res.send("<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align='center'><a href='./logIn.html'>login again<a><div>");
-        }); // Intentamos leer el archivo del registro de usuarios
+            }            
+            res.send(loginFailureMessage_InvalidEmailOrPasswd);
+            return
+        }             
+        res.send(loginFailureMessage_InvalidEmailOrPasswd);
     } catch{
-        res.send("Login failed: Internal server error");
-    } // Mensaje de error
+        res.send(loginFailureMessage_ServerError);
+    }
 }
 
-async function saveUser(req, users) {
-    let hashPassword = await bcrypt.hash(req.body.password, 10);
-    let newUser = new User(req.username, req.body.email, hashPassword);
+async function saveUser(req, usersArray) {
+    let hashedPassword = await bcrypt.hash(req.body.password, 10)
+    let newUser = new User(req.body.username, req.body.email, hashedPassword)
 
-    users.push(newUser);
-    FileSystem.writeFile(usersFileName, JSON.stringify(users), (err) => {
-        if (err) {
-            throw err
+    usersArray.push(newUser)
+    console.log(usersArray)
+    FileSystem.writeFile(registeredUsersFile, JSON.stringify(usersArray), (cannotWriteFile) => {
+        if (cannotWriteFile) {
+            throw cannotWriteFile
         }
     });
 
-    console.log(`New user registered: ${newUser.username}: ${newUser.email}`)
+    console.log(`Un nuevo usuario se ha registrado: \n\tnombre de usuario: ${newUser.username}, \n\temail: ${newUser.email}`)
 }
