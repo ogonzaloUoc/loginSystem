@@ -38,7 +38,8 @@ function init() {
 }
 
 function printRegisteredUsers() {
-    if (registeredUsersArray != undefined && registeredUsersArray.length != 0) {
+    if (registeredUsersArray !== undefined && registeredUsersArray.length > 0) {
+
         console.log('Usuarios registrados:\n')
         registeredUsersArray.forEach(user => {
             console.log(`\t${user.username}: ${user.email}`)
@@ -51,22 +52,22 @@ function printRegisteredUsers() {
 function loadUsers() {
     FileSystem.stat(registeredUsersFile, (fileNotExists, _stats) => {
         if (fileNotExists) {
-            FileSystem.writeFile(registeredUsersFile, "[{}]", (cantWriteFile) => {
+            FileSystem.writeFile(registeredUsersFile, "[]", (cantWriteFile) => {
                 if (cantWriteFile) {
                     throw cantWriteFile
                 }
-            })
+            })          
+        }   
 
-            FileSystem.readFile(registeredUsersFile, 'utf8', (cantReadFile, usersFromFile) => {
-                if (cantReadFile) {
-                    throw cantReadFile
-                }
-    
-                registeredUsersArray = JSON.parse(usersFromFile)                          
-            })   
-        }    
+        FileSystem.readFile(registeredUsersFile, 'utf8', (cantReadFile, usersFromFile) => {
+            if (cantReadFile) {
+                throw cantReadFile
+            }
+
+            registeredUsersArray = JSON.parse(usersFromFile)      
+            printRegisteredUsers()                
+        }) 
         
-        printRegisteredUsers() 
     })        
 }
 
@@ -87,8 +88,8 @@ async function root(req, res) {
 }
 
 async function register(req, res) {
-    const registerSuccessMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>"
-    const registerFailureMessage_EmailAlreadyExists = "<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>"
+    const registerSuccessMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./registration.html'>Register another user</a></div>"
+    const registerFailureMessage_EmailAlreadyExists = "<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./registration.html'>Register again</a></div>"
     const registerFailureMessage_ServerError = "Registration failed: Internal server error"
 
     try{
