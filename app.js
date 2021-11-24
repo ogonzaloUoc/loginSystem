@@ -51,7 +51,7 @@ function printRegisteredUsers() {
 function loadUsers() {
     FileSystem.stat(registeredUsersFile, (fileNotExists, _stats) => {
         if (fileNotExists) {
-            FileSystem.writeFile(registeredUsersFile, "[]", (cantWriteFile) => {
+            FileSystem.writeFile(registeredUsersFile, "[{}]", (cantWriteFile) => {
                 if (cantWriteFile) {
                     throw cantWriteFile
                 }
@@ -86,8 +86,6 @@ async function root(req, res) {
         res.sendFile(path.join(__dirname,'./public/logIn.html'))
 }
 
-/* Problema: error de servidor al intentar registrar un usuario en la misma
-iteración en la que se crea el archivo users.json*/
 async function register(req, res) {
     const registerSuccessMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>"
     const registerFailureMessage_EmailAlreadyExists = "<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>"
