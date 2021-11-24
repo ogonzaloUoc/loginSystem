@@ -37,25 +37,36 @@ function init() {
     loadUsers()
 }
 
+function printRegisteredUsers() {
+    if (registeredUsersArray != undefined && registeredUsersArray.length != 0) {
+        console.log('Usuarios registrados:\n')
+        registeredUsersArray.forEach(user => {
+            console.log(`\t${user.username}: ${user.email}`)
+        })
+        return
+    }  
+    console.log('Todavia no hay usuarios registrados\n')
+}
+
 function loadUsers() {
     FileSystem.stat(registeredUsersFile, (fileNotExists, _stats) => {
         if (fileNotExists) {
-            FileSystem.writeFile(registeredUsersFile, '{}', (cantWriteFile) => {
+            FileSystem.writeFile(registeredUsersFile, "[]", (cantWriteFile) => {
                 if (cantWriteFile) {
                     throw cantWriteFile
                 }
             })
+
+            FileSystem.readFile(registeredUsersFile, 'utf8', (cantReadFile, usersFromFile) => {
+                if (cantReadFile) {
+                    throw cantReadFile
+                }
+    
+                registeredUsersArray = JSON.parse(usersFromFile)                          
+            })   
         }    
-        FileSystem.readFile(registeredUsersFile, 'utf8', (cantReadFile, data) => {
-            if (cantReadFile) {
-                throw cantReadFile
-            }
-            registeredUsersArray = JSON.parse(data)
-            console.log('Usuarios registrados:\n')
-            registeredUsersArray.forEach(user => {
-                console.log(`\t${user.username}: ${user.email}`)
-            })
-        })   
+        
+        printRegisteredUsers() 
     })        
 }
 
@@ -75,6 +86,8 @@ async function root(req, res) {
         res.sendFile(path.join(__dirname,'./public/logIn.html'))
 }
 
+/* Problema: error de servidor al intentar registrar un usuario en la misma
+iteración en la que se crea el archivo users.json*/
 async function register(req, res) {
     const registerSuccessMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>"
     const registerFailureMessage_EmailAlreadyExists = "<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>"
@@ -130,6 +143,7 @@ async function saveUser(req, usersArray) {
 
     usersArray.push(newUser)
     console.log(usersArray)
+
     FileSystem.writeFile(registeredUsersFile, JSON.stringify(usersArray), (cannotWriteFile) => {
         if (cannotWriteFile) {
             throw cannotWriteFile
