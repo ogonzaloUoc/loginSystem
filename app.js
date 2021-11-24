@@ -7,7 +7,8 @@ const session = require('express-session'); // Librería para la gestión de ses
 const FileSystem = require("fs");
 const { User } = require('./users');
 const registeredUsersFile = 'users.json'
-//const sessionOptions = require('./sessionOptions').sessionOptions;
+const restrictedMiddleware = require('./restricted-middleware.js')
+//const sessionOptions = require('./sessionOptions.js').sessionOptions;
 
 var registeredUsersArray = [];
 
@@ -22,6 +23,7 @@ function init() {
     app.use(bodyParser.urlencoded({extended: false}));
     app.use(express.static(path.join(__dirname,'./public')));
 
+    //app.use(sessionOptions)    
     app.use(session({
         name: "micookie",
         secret: "lascookiessonbuenas",
@@ -32,12 +34,12 @@ function init() {
         },
         resave: false,
         saveUninitialized: false
-    } ));
+    } ));    
 
     loadUsers()
 }
 
-function printRegisteredUsers() {
+function printRegisteredUsersToConsole() {
     if (registeredUsersArray !== undefined && registeredUsersArray.length > 0) {
 
         console.log('Usuarios registrados:\n')
@@ -65,7 +67,7 @@ function loadUsers() {
             }
 
             registeredUsersArray = JSON.parse(usersFromFile)      
-            printRegisteredUsers()                
+            printRegisteredUsersToConsole()                
         }) 
         
     })        
@@ -74,7 +76,8 @@ function loadUsers() {
 function registerRoutes() {
     app.get('/', root)
     app.post('/register', register)
-    app.post('/login', login)    
+    app.post('/login', login) 
+    app.get('/users', restrictedMiddleware, printRegisteredUsersToHtml)   
 }
 
 function startListening() {
@@ -122,7 +125,7 @@ async function login(req, res) {
             if (passwordsMatch) {
                 let username = foundUser.username;
                 console.log(`\nConectado como:\n\n\t${username}\n`);
-                //req.session.user = foundUser;
+                req.session.user = foundUser;
                 const loginSuccessMessage = `<div align ='center'><h2>login successful</h2></div><br><br><br><div align ='center'><h3>Hello ${username}</h3></div><br><br><div align='center'><a href='./logIn.html'>logout</a></div>`
                 res.send(loginSuccessMessage);
                 return
@@ -150,4 +153,10 @@ async function saveUser(req, usersArray) {
     });
 
     console.log(`Un nuevo usuario se ha registrado: \n\tnombre de usuario: ${newUser.username}, \n\temail: ${newUser.email}`)
+}
+
+function printRegisteredUsersToHtml(_req, res) {
+    loadUsers()
+    const printableUsers = JSON.stringify(registeredUsersArray)
+    res.send(`<div align ='center'><h2>Registered users:</h2></div><br><br><div align ='center'><p> ${printableUsers} </p></div>`)
 }

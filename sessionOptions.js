@@ -2,7 +2,8 @@
 Valores de configuración de nuestra cookie de sesión
 
 Nota: En producción estas opciones deberían ser variables de entorno */
-const sessionOptions = {
+
+module.exports = sessionOptions = {
     name: "micookie",
     secret: "lascookiessonbuenas",
     cookie: {
@@ -13,5 +14,3 @@ const sessionOptions = {
     resave: false,
     saveUninitialized: false
   } 
-
-  module.exports = {sessionOptions};
