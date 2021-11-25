@@ -39,18 +39,6 @@ function init() {
     loadUsers()
 }
 
-function printRegisteredUsersToConsole() {
-    if (registeredUsersArray !== undefined && registeredUsersArray.length > 0) {
-
-        console.log('Usuarios registrados:\n')
-        registeredUsersArray.forEach(user => {
-            console.log(`\t${user.username}: ${user.email}`)
-        })
-        return
-    }  
-    console.log('Todavia no hay usuarios registrados\n')
-}
-
 function loadUsers() {
     FileSystem.stat(registeredUsersFile, (fileNotExists, _stats) => {
         if (fileNotExists) {
@@ -153,6 +141,18 @@ async function saveUser(req, usersArray) {
     });
 
     console.log(`Un nuevo usuario se ha registrado: \n\tnombre de usuario: ${newUser.username}, \n\temail: ${newUser.email}`)
+}
+
+function printRegisteredUsersToConsole() {
+    if (registeredUsersArray !== undefined && registeredUsersArray.length > 0) {
+
+        console.log('Usuarios registrados:\n')
+        registeredUsersArray.forEach(user => {
+            console.log(`\t${user.username}: ${user.email}`)
+        })
+        return
+    }  
+    console.log('Todavia no hay usuarios registrados\n')
 }
 
 function printRegisteredUsersToHtml(_req, res) {
