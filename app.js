@@ -8,6 +8,7 @@ const FileSystem = require("fs");
 const { User } = require('./users');
 const registeredUsersFile = 'users.json'
 const restrictedMiddleware = require('./restricted-middleware.js')
+const logout = require('./logout.js')
 //const sessionOptions = require('./sessionOptions.js').sessionOptions;
 
 var registeredUsersArray = [];
@@ -53,11 +54,9 @@ function loadUsers() {
             if (cantReadFile) {
                 throw cantReadFile
             }
-
             registeredUsersArray = JSON.parse(usersFromFile)      
             printRegisteredUsersToConsole()                
-        }) 
-        
+        })         
     })        
 }
 
@@ -66,6 +65,7 @@ function registerRoutes() {
     app.post('/register', register)
     app.post('/login', login) 
     app.get('/users', restrictedMiddleware, printRegisteredUsersToHtml)   
+    app.get('/logout', logout)
 }
 
 function startListening() {
