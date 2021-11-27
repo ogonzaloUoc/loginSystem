@@ -1,15 +1,15 @@
-const express = require('express');
-const http = require('http');
-const bcrypt = require('bcrypt'); // Encriptado de contraseñas
-const path = require("path");
-const bodyParser = require('body-parser');
-const session = require('express-session'); // Librería para la gestión de sesiones de usuarios
-const FileSystem = require("fs");
-const { User } = require('./users');
+const express = require('express')
+const http = require('http')
+const bcrypt = require('bcrypt') // Encriptado de contraseñas
+const path = require("path")
+const bodyParser = require('body-parser')
+const session = require('express-session') // Librería para la gestión de sesiones de usuarios
+const pug = require('pug') // View engine
+const FileSystem = require("fs")
+const { User } = require('./user.js')
 const registeredUsersFile = 'users.json'
 const restrictedMiddleware = require('./restricted-middleware.js')
 const logout = require('./logout.js')
-//const sessionOptions = require('./sessionOptions.js').sessionOptions;
 
 var registeredUsersArray = [];
 
@@ -24,7 +24,6 @@ function init() {
     app.use(bodyParser.urlencoded({extended: false}));
     app.use(express.static(path.join(__dirname,'./public')));
 
-    //app.use(sessionOptions)    
     app.use(session({
         name: "micookie",
         secret: "lascookiessonbuenas",
@@ -37,10 +36,12 @@ function init() {
         saveUninitialized: false
     } ));    
 
-    loadUsers()
+    app.set('view engine', 'pug')
+
+    loadUsers(true)
 }
 
-function loadUsers() {
+function loadUsers(printUsers) {
     FileSystem.stat(registeredUsersFile, (fileNotExists, _stats) => {
         if (fileNotExists) {
             FileSystem.writeFile(registeredUsersFile, "[]", (cantWriteFile) => {
@@ -54,8 +55,10 @@ function loadUsers() {
             if (cantReadFile) {
                 throw cantReadFile
             }
-            registeredUsersArray = JSON.parse(usersFromFile)      
-            printRegisteredUsersToConsole()                
+            registeredUsersArray = JSON.parse(usersFromFile)  
+            if (printUsers) {
+                printRegisteredUsersToConsole() 
+            }                           
         })         
     })        
 }
@@ -64,8 +67,8 @@ function registerRoutes() {
     app.get('/', root)
     app.post('/register', register)
     app.post('/login', login) 
-    app.get('/users', restrictedMiddleware, printRegisteredUsersToHtml)   
-    app.get('/logout', logout)
+    app.get('/users', restrictedMiddleware, usersList)   
+    app.get('/logout', restrictedMiddleware, logout)
 }
 
 function startListening() {
@@ -114,7 +117,10 @@ async function login(req, res) {
                 let username = foundUser.username;
                 console.log(`\nConectado como:\n\n\t${username}\n`);
                 req.session.user = foundUser;
-                const loginSuccessMessage = `<div align ='center'><h2>login successful</h2></div><br><br><br><div align ='center'><h3>Hello ${username}</h3></div><br><br><div align='center'><a href='./logIn.html'>logout</a></div>`
+                const loginSuccessMessage = `<div align ='center'><h2>login successful</h2></div><br><br><br>
+                <div align ='center'><h3>Hello ${username}</h3></div><br><br>
+                <div align='center'><a href='/users'>List registered users</a></div><br><br>
+                <div align='center'><a href='/logout'>Logout</a></div>`
                 res.send(loginSuccessMessage);
                 return
             }            
@@ -159,4 +165,12 @@ function printRegisteredUsersToHtml(_req, res) {
     loadUsers()
     const printableUsers = JSON.stringify(registeredUsersArray)
     res.send(`<div align ='center'><h2>Registered users:</h2></div><br><br><div align ='center'><p> ${printableUsers} </p></div>`)
+}
+
+function usersList(req, res) {
+    loadUsers(false)
+    const printableUsers = JSON.stringify(registeredUsersArray)
+    res.render('users',  {
+        users: printableUsers
+    })
 }
