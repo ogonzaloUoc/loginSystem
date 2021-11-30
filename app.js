@@ -68,7 +68,7 @@ function registerRoutes() {
     app.post('/register', register)
     app.post('/login', login) 
     app.get('/users', restrictedMiddleware, usersList)   
-    app.get('/logout', restrictedMiddleware, logout)
+    app.post('/logout', restrictedMiddleware, logout)
 }
 
 function startListening() {
@@ -118,9 +118,24 @@ async function login(req, res) {
                 console.log(`\nConectado como:\n\n\t${username}\n`);
                 req.session.user = foundUser;
                 const loginSuccessMessage = `<div align ='center'><h2>login successful</h2></div><br><br><br>
-                <div align ='center'><h3>Hello ${username}</h3></div><br><br>
-                <div align='center'><a href='/users'>List registered users</a></div><br><br>
-                <div align='center'><a href='/logout'>Logout</a></div>`
+                <div align ='center'>
+                    <h3>Hello ${username}</h3>
+                </div>
+                <br>
+                <br>
+                <div align='center'>
+                    <a href='/users'>List registered users</a>
+                </div>
+                <br>
+                <br>
+                <div align ='center'>
+                    <form method="post" action="/logout" class="inline">
+                        <input type="hidden" name="extra_submit_param" value="extra_submit_value">
+                        <button type="submit" name="submit_param" value="submit_value" class="link-button">
+                            logout
+                        </button>
+                    </form>
+                </div>`
                 res.send(loginSuccessMessage);
                 return
             }            
@@ -168,9 +183,7 @@ function printRegisteredUsersToHtml(_req, res) {
 }
 
 function usersList(req, res) {
-    loadUsers(false)
-    const printableUsers = JSON.stringify(registeredUsersArray)
     res.render('users',  {
-        users: printableUsers
+        users: registeredUsersArray
     })
 }

@@ -8,7 +8,6 @@ module.exports = (req, res) => {
         }
       });
     } else  {
-        //res.status(400).send('<p>Unable to log out</p>')
         res.end()
     }
 };
