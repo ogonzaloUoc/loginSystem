@@ -25,40 +25,10 @@ function getInfoForm(){
     reef();
 }
 
-
-function changeImg1(){
-    var userAvatar = document.getElementById("avatar");   
-    userAvatar.src = "http://localhost:3000/img/avatar1.png";
-}
-function changeImg2(){
-    var userAvatar = document.getElementById("avatar");   
-    userAvatar.src = "http://localhost:3000/img/avatar2.png";
-}
-function changeImg3(){
-    var userAvatar = document.getElementById("avatar");   
-    userAvatar.src = "http://localhost:3000/img/avatar3.png";
-}
-function changeImg4(){
-    var userAvatar = document.getElementById("avatar");   
-    userAvatar.src = "http://localhost:3000/img/avatar4.png";
-}
-function changeImg5(){
-    var userAvatar = document.getElementById("avatar");   
-    userAvatar.src = "http://localhost:3000/img/avatar5.png";
-}
-function changeImg6(){
-    var userAvatar = document.getElementById("avatar");   
-    userAvatar.src = "http://localhost:3000/img/avatar6.png";
+function changeAvatar(image_src) {
+    var userAvatar = document.getElementById("avatar");
+    userAvatar.src = image_src
 }
 
-function reef(){
-
-    if(document.getElementById("inputEmail").value != "" && document.getElementById("inputPassword").value != "" && document.getElementById("inputUsername").value != "" && document.getElementById("avatar").src != "https://us.123rf.com/450wm/blankstock/blankstock1409/blankstock140900061/31369711-signo-de-interrogaci%C3%B3n-signo-icono-s%C3%ADmbolo-de-ayuda-signo-de-preguntas-frecuentes-c%C3%ADrculo-bot%C3%B3n-plan.jpg?ver=6"){
-        alert("Lets Play!");
-        window.location.href = "http://localhost:3000/chooseMode.html";
-        }
-    else{
-        alert("Something wrong!");
-    }
-}
+// Go to chooseMode.html after registration
     

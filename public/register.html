@@ -31,23 +31,25 @@
                 <div class="mb-3">
                   <label for="password" class="form-label"><strong>Password</strong></label>
                   <input type="password" name="password" class="form-control" id="password" placeholder="Password">
-                </div>
+                </div>			
     
                 <div>
-                    <label for="exampleAvatars" class="form-label"><strong>Avatar</strong></label>
+                    <label for="suggestedAvatars" class="form-label"><strong>Avatar</strong></label>
                     <div class="contenedor" >
-                        <div onclick="changeImg1()" id="item1"><img src="http://localhost:3000/img/avatar1.png" alt=""></div>
-                        <div onclick="changeImg2()" id="item2"><img src="http://localhost:3000/img/avatar2.png" alt=""></div>
-                        <div onclick="changeImg3()" id="item3"><img src="http://localhost:3000/img/avatar3.png" alt=""></div>
-                        <div onclick="changeImg4()" id="item4"><img src="http://localhost:3000/img/avatar4.png" alt=""></div>
-                        <div onclick="changeImg5()" id="item5"><img src="http://localhost:3000/img/avatar5.png" alt=""></div>
-                        <div onclick="changeImg6()" id="item6"><img src="http://localhost:3000/img/avatar6.png" alt=""></div>
+                        <img onclick="changeAvatar(src)" src="./img/avatar1.png" alt="">
+						<img onclick="changeAvatar(src)" src="./img/avatar2.png" alt="">
+                        <img onclick="changeAvatar(src)" src="./img/avatar3.png" alt="">
+                        <img onclick="changeAvatar(src)" src="./img/avatar4.png" alt="">
+                        <img onclick="changeAvatar(src)" src="./img/avatar5.png" alt="">
+                        <img onclick="changeAvatar(src)" src="./img/avatar6.png" alt="">                        
                     </div>
                 </div>
+
                 <div>
                     <p><strong>Avatar: </strong></p>
-                    <img src="./img/avatar1.png" id="avatar" class="avatar" alt="">
+                    <img src="./img/avatar1.png" id="avatar" name="avatar" class="avatar" alt="">
                 </div>
+
                 <div class="button">
                     <button type="submit" onclick="getInfoForm()" class="btn-lg btn-danger">Save!</button>
                 </div>
@@ -58,7 +60,6 @@
     </main>
     
     <footer></footer>
-
     
 </body>
 </html>
