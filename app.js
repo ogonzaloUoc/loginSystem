@@ -41,6 +41,16 @@ function init() {
     loadUsers()
 }
 
+function parseRegisteredUsers() {
+    FileSystem.readFile(registeredUsersFile, 'utf8', (cantReadFile, usersFromFile) => {
+        if (cantReadFile) {
+            throw cantReadFile
+        }
+        registeredUsersArray = JSON.parse(usersFromFile)  
+        printRegisteredUsersToConsole() 
+    })   
+}
+
 function loadUsers() {
     FileSystem.stat(registeredUsersFile, (fileNotExists, _stats) => {
         if (fileNotExists) {
@@ -51,13 +61,8 @@ function loadUsers() {
             })          
         }   
 
-        FileSystem.readFile(registeredUsersFile, 'utf8', (cantReadFile, usersFromFile) => {
-            if (cantReadFile) {
-                throw cantReadFile
-            }
-            registeredUsersArray = JSON.parse(usersFromFile)  
-            printRegisteredUsersToConsole() 
-        })         
+        parseRegisteredUsers()
+              
     })        
 }
 
@@ -169,7 +174,10 @@ async function saveUser(req, usersArray) {
         }
     });
 
-    console.log(`Un nuevo usuario se ha registrado: \n\tnombre de usuario: ${newUser.username}, \n\temail: ${newUser.email}`)
+    console.log(`Un nuevo usuario se ha registrado: 
+    \n\tnombre de usuario: ${newUser.username}, 
+    \n\temail: ${newUser.email}
+    \n\tavatar: ${newUser.avatar}`)
 }
 
 function printRegisteredUsersToConsole() {

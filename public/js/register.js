@@ -2,9 +2,9 @@
 var form = document.getElementById("userForm");
 
 function getInfoForm(){
-    var email = document.getElementById("inputEmail").value;
-    var password = document.getElementById("inputPassword").value;
-    var username = document.getElementById("inputUsername").value;
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+    var username = document.getElementById("username").value;
     var avatar = document.getElementById("avatar").src;
 
     let usuario = [{email: email, password: password, username: username, avatar: avatar}];
@@ -22,7 +22,6 @@ function getInfoForm(){
     valorAvatar = localStorage.getItem("avatar");
 
     console.log("Se ha almacenado correctamente el correo: " + valorEmail + " la contraseña: " + valorPassword + " el username: " + valorUsername + " y el avatar: " + valorAvatar);
-    reef();
 }
 
 function changeAvatar(image_src) {
