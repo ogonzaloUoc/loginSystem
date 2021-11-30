@@ -1,0 +1,47 @@
+header{
+    background-color: #852747;
+    padding: 2%;
+    border: 2px solid black;
+}
+h1{
+    color: #FF7777;
+    text-align: center;
+}
+main{
+    background-image: url("../img/fondo1.jpg");
+    background-size: 100% 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;    
+}
+.base{
+    border: 1px solid black;
+    background-color: #F5C6A5;
+    margin-left: 25%;
+    margin-right: 25%;
+}
+form{
+    margin-left: 40%;
+    margin-right: 40%;
+    padding-top: 10%;
+    padding-bottom: 25%;
+}
+footer{
+    background-color: #852747;
+    height: 10%;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    border: 2px solid black;
+}
+label{
+    color: #852747;
+    font-size: large;
+}
+p{
+    color: #852747;
+}
+.button{
+    text-align: center;
+    padding: 20%;
+}

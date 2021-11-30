@@ -2,7 +2,7 @@ const express = require('express')
 const http = require('http')
 const bcrypt = require('bcrypt') // Encriptado de contraseñas
 const path = require("path")
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser') // Access info from requests
 const session = require('express-session') // Librería para la gestión de sesiones de usuarios
 const pug = require('pug') // View engine
 const FileSystem = require("fs")
@@ -38,10 +38,10 @@ function init() {
 
     app.set('view engine', 'pug')
 
-    loadUsers(true)
+    loadUsers()
 }
 
-function loadUsers(printUsers) {
+function loadUsers() {
     FileSystem.stat(registeredUsersFile, (fileNotExists, _stats) => {
         if (fileNotExists) {
             FileSystem.writeFile(registeredUsersFile, "[]", (cantWriteFile) => {
@@ -56,18 +56,18 @@ function loadUsers(printUsers) {
                 throw cantReadFile
             }
             registeredUsersArray = JSON.parse(usersFromFile)  
-            if (printUsers) {
-                printRegisteredUsersToConsole() 
-            }                           
+            printRegisteredUsersToConsole() 
         })         
     })        
 }
 
 function registerRoutes() {
-    app.get('/', root)
-    app.post('/register', register)
-    app.post('/login', login) 
-    app.get('/users', restrictedMiddleware, usersList)   
+    app.get('/', home)
+    app.get('/login', login_get)
+    app.post('/login', login_post) 
+    app.get('/register', register_get)
+    app.post('/register', register_post)
+    app.get('/users', restrictedMiddleware, renderRegisteredUsers)   
     app.post('/logout', restrictedMiddleware, logout)
 }
 
@@ -77,31 +77,16 @@ function startListening() {
     });
 }
 
-async function root(req, res) {
-        res.sendFile(path.join(__dirname,'./public/logIn.html'))
+function home(_req, res) {
+    res.sendFile(path.join(__dirname,'./public/home.html'))
 }
 
-async function register(req, res) {
-    const registerSuccessMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./logIn.html'>login</a></div><br><br><div align='center'><a href='./registration.html'>Register another user</a></div>"
-    const registerFailureMessage_EmailAlreadyExists = "<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./registration.html'>Register again</a></div>"
-    const registerFailureMessage_ServerError = "Registration failed: Internal server error"
-
-    try{
-        let userExists = registeredUsersArray.find((data) => req.body.email === data.email)
-        if (!userExists) {            
-            saveUser(req, registeredUsersArray)            
-            res.send(registerSuccessMessage)
-            return
-        }
-        res.send(registerFailureMessage_EmailAlreadyExists)
-
-    } catch{
-        res.send(registerFailureMessage_ServerError)
-    }
+function login_get(_req, res) {
+        res.sendFile(path.join(__dirname,'./public/login.html'))
 }
 
-async function login(req, res) {
-    const loginFailureMessage_InvalidEmailOrPasswd = "<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align ='center'><a href='./logIn.html'>login again</a></div>"
+function login_post(req, res) {
+    const loginFailureMessage_InvalidEmailOrPasswd = "<div align ='center'><h2>Invalid email or password</h2></div><br><br><div align ='center'><a href='/login'>login again</a></div>"
     const loginFailureMessage_ServerError = "Login failed: Internal server error"
 
     try{           
@@ -148,6 +133,29 @@ async function login(req, res) {
     }
 }
 
+function register_get(_req, res) {
+    res.sendFile(path.join(__dirname,'./public/register.html'))
+}
+
+async function register_post(req, res) {
+    const registerSuccessMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./login.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>"
+    const registerFailureMessage_EmailAlreadyExists = "<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='./register.html'>Register again</a></div>"
+    const registerFailureMessage_ServerError = "Registration failed: Internal server error"
+
+    try{
+        let userExists = registeredUsersArray.find((data) => req.body.email === data.email)
+        if (!userExists) {            
+            saveUser(req, registeredUsersArray)            
+            res.send(registerSuccessMessage)
+            return
+        }
+        res.send(registerFailureMessage_EmailAlreadyExists)
+
+    } catch{
+        res.send(registerFailureMessage_ServerError)
+    }
+}
+
 async function saveUser(req, usersArray) {
     let hashedPassword = await bcrypt.hash(req.body.password, 10)
     let newUser = new User(req.body.username, req.body.email, hashedPassword)
@@ -182,7 +190,7 @@ function printRegisteredUsersToHtml(_req, res) {
     res.send(`<div align ='center'><h2>Registered users:</h2></div><br><br><div align ='center'><p> ${printableUsers} </p></div>`)
 }
 
-function usersList(req, res) {
+function renderRegisteredUsers(req, res) {
     res.render('users',  {
         users: registeredUsersArray
     })
