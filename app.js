@@ -54,15 +54,13 @@ function parseRegisteredUsers() {
 function loadUsers() {
     FileSystem.stat(registeredUsersFile, (fileNotExists, _stats) => {
         if (fileNotExists) {
-            FileSystem.writeFile(registeredUsersFile, "[]", (cantWriteFile) => {
+            FileSystem.writeFileSync(registeredUsersFile, "[]", (cantWriteFile) => {
                 if (cantWriteFile) {
                     throw cantWriteFile
                 }
             })          
         }   
-
         parseRegisteredUsers()
-              
     })        
 }
 
@@ -163,7 +161,7 @@ async function register_post(req, res) {
 
 async function saveUser(req, usersArray) {
     let hashedPassword = await bcrypt.hash(req.body.password, 10)
-    let newUser = new User(req.body.username, req.body.email, hashedPassword, req.body.avatar)
+    let newUser = new User(req.body.username, req.body.email, hashedPassword, req.body.avatarSrc)
 
     usersArray.push(newUser)
     console.log(usersArray)

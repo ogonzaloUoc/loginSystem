@@ -25,8 +25,11 @@ function getInfoForm(){
 }
 
 function changeAvatar(image_src) {
-    var userAvatar = document.getElementById("avatar");
-    userAvatar.src = image_src
+    var userAvatar = document.getElementById("avatar")
+    var avatarInput = document.getElementById("avatarSrc")
+    userAvatar.src = image_src // Actualizamos imagen seleccionada
+    avatarInput.value = image_src // Actualizamos el valor del input, utilizado por el bodyparser
+
 }
 
 // Go to chooseMode.html after registration
