@@ -1,0 +1,53 @@
+const path = require("path")
+const FileSystem = require("fs")
+const bcrypt = require('bcrypt') // Encriptado de contraseñas
+
+const { User } = require('../models/user')
+var sharedData = require('../libs/sharedData')
+const registeredUsersFile = './storage/users.json'
+
+function register_get(_req, res) {
+    res.sendFile(path.join(__dirname,'../public/register.html'))
+}
+
+async function register_post(req, res) {
+    const registerSuccessMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./login.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>"
+    const registerFailureMessage_EmailAlreadyExists = "<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='/register'>Register again</a></div>"
+    const registerFailureMessage_ServerError = "Registration failed: Internal server error"
+
+    try{
+        let userExists = sharedData.registeredUsersArray.find((data) => req.body.email === data.email)
+        if (!userExists) {            
+            saveUser(req, sharedData.registeredUsersArray)            
+            res.send(registerSuccessMessage)
+            return
+        }
+        res.send(registerFailureMessage_EmailAlreadyExists)
+
+    } catch{
+        res.send(registerFailureMessage_ServerError)
+    }
+}
+
+async function saveUser(req) {
+    let hashedPassword = await bcrypt.hash(req.body.password, 10)
+    let newUser = new User(req.body.username, req.body.email, hashedPassword, req.body.avatarSrc)
+
+    sharedData.registeredUsersArray.push(newUser)
+
+    FileSystem.writeFile(registeredUsersFile, JSON.stringify(sharedData.registeredUsersArray), (cannotWriteFile) => {
+        if (cannotWriteFile) {
+            throw cannotWriteFile
+        }
+    });
+
+    console.log(`\nUn nuevo usuario se ha registrado: 
+    \n\tnombre de usuario: ${newUser.username}, 
+    \n\temail: ${newUser.email}
+    \n\tavatar: ${newUser.avatar}`)
+}
+
+module.exports = {
+    register_get,
+    register_post
+}
