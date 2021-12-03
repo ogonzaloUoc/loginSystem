@@ -13,7 +13,7 @@ function register_get(_req, res) {
 }
 
 async function register_post(req, res) {
-    const registerSuccessMessage = "<div align ='center'><h2>Registration successful</h2></div><br><br><div align='center'><a href='./login.html'>login</a></div><br><br><div align='center'><a href='./register.html'>Register another user</a></div>"
+    const registerSuccessMessage = '<p>Registration successful</p> <meta http-equiv="refresh" content="3;url=/login" />'
     const registerFailureMessage_EmailAlreadyExists = "<div align ='center'><h2>Email already used</h2></div><br><br><div align='center'><a href='/register'>Register again</a></div>"
     const registerFailureMessage_ServerError = "Registration failed: Internal server error"
 
