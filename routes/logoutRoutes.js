@@ -1,11 +1,11 @@
 const express = require('express')
 
 const logoutController = require('../controllers/logoutController')
-const restrictAccess = require('../libs/restrictAccess')
+const sharedFunctions = require('../libs/sharedFunctions')
 
 
 const router = express.Router()
 
-router.post('/logout', restrictAccess, logoutController.logout_post)
+router.post('/logout', sharedFunctions.resctrictAccess, logoutController.logout_post)
 
 module.exports = router

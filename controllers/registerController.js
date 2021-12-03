@@ -3,8 +3,10 @@ const FileSystem = require("fs")
 const bcrypt = require('bcrypt') // Encriptado de contraseñas
 
 const { User } = require('../models/user')
-var sharedData = require('../libs/sharedData')
 const registeredUsersFile = './storage/users.json'
+const sharedFunctions = require('../libs/sharedFunctions')
+
+var sharedData = require('../libs/sharedData')
 
 function register_get(_req, res) {
     res.sendFile(path.join(__dirname,'../public/register.html'))
@@ -44,7 +46,9 @@ async function saveUser(req) {
     console.log(`\nUn nuevo usuario se ha registrado: 
     \n\tnombre de usuario: ${newUser.username}, 
     \n\temail: ${newUser.email}
-    \n\tavatar: ${newUser.avatar}`)
+    \n\tavatar: ${newUser.avatar}\n`)
+
+    sharedFunctions.loadUsers()
 }
 
 module.exports = {

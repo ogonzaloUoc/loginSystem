@@ -5,7 +5,7 @@ function logout_post(req, res) {
         if (unableToDestroySession) {
           res.status(400).send('<p>Unable to log out</p>')
         } else {
-          res.status(200).send('<p>Logout successful</p>')
+          res.status(200).send('<p>Logout successful</p> <meta http-equiv="refresh" content="3;url=/" />')
           console.log(`\nEl usuario ${user} se ha desconectado\n`);
         }
       });
@@ -13,7 +13,6 @@ function logout_post(req, res) {
         res.end()
     }
 }
-
 module.exports = {
    logout_post
 }
