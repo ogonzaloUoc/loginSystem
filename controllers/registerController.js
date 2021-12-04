@@ -9,7 +9,7 @@ const sharedFunctions = require('../libs/sharedFunctions')
 var sharedData = require('../libs/sharedData')
 
 function register_get(_req, res) {
-    res.sendFile(path.join(__dirname,'../public/register.html'))
+    res.sendFile(path.join(__dirname,'../views/register.html'))
 }
 
 async function register_post(req, res) {

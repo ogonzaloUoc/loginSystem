@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt') // Encriptado de contraseñas
 var sharedData = require('../libs/sharedData')
 
 function login_get(_req, res) {
-    res.sendFile(path.join(__dirname,'../public/login.html'))
+    res.sendFile(path.join(__dirname,'../views/login.html'))
 }
 
 function login_post(req, res) {
