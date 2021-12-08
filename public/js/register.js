@@ -1,4 +1,3 @@
-
 var form = document.getElementById("userForm");
 
 function getInfoForm(){
@@ -23,11 +22,3 @@ function getInfoForm(){
 
     console.log("Se ha almacenado correctamente el correo: " + valorEmail + " la contraseña: " + valorPassword + " el username: " + valorUsername + " y el avatar: " + valorAvatar);
 }
-
-function changeAvatar(image_src) {
-    var userAvatar = document.getElementById("avatar")
-    var avatarInput = document.getElementById("avatarSrc")
-    userAvatar.src = image_src // Actualizamos imagen seleccionada
-    avatarInput.value = image_src // Actualizamos el valor del input, utilizado por el bodyparser
-
-}    

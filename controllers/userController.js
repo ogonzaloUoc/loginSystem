@@ -6,6 +6,13 @@ function users_get(req, res) {
     })
 }
 
+function updateUser_post(req, res) {
+
+}
+
+//function deleteUser_delete()
+
 module.exports = { 
-    users_get
+    users_get,
+    updateUser_post
 }

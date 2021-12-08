@@ -24,26 +24,7 @@ function login_post(req, res) {
                 let username = foundUser.username;
                 console.log(`\nConectado como:\n\n\t${username}\n`);
                 req.session.user = foundUser;
-                const loginSuccessMessage = `<div align ='center'><h2>login successful</h2></div><br><br><br>
-                <div align ='center'>
-                    <h3>Hello ${username}</h3>
-                </div>
-                <br>
-                <br>
-                <div align='center'>
-                    <a href='/users'>List registered users</a>
-                </div>
-                <br>
-                <br>
-                <div align ='center'>
-                    <form method="post" action="/logout" class="inline">
-                        <input type="hidden" name="extra_submit_param" value="extra_submit_value">
-                        <button type="submit" name="submit_param" value="submit_value" class="link-button">
-                            logout
-                        </button>
-                    </form>
-                </div>`
-                res.send(loginSuccessMessage);
+                res.redirect('/choosemode')
                 return
             }            
             res.send(loginFailureMessage_InvalidEmailOrPasswd);
@@ -55,7 +36,18 @@ function login_post(req, res) {
     }
 }
 
+function loggedUser_get(req, res) {
+    if(req.session) {
+        res.json({
+            user: req.session.user
+        })
+    } else {
+        res.json({})
+    }
+}
+
 module.exports = {
     login_get,
-    login_post
+    login_post,
+    loggedUser_get
 }

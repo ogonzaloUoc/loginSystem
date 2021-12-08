@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Mode</title>
+    <link rel="stylesheet" href="./css/chooseMode.css">
+</head>
+    <body>
+        <header>
+            <h1>Choose your game by dropping your avatar over the game</h1>
+        </header>
+
+        <main>
+            <div class="tabla">
+                <aside class="izquierda" ondrop="drop(event)"  ondragstart="return false" ondragover="allowDrop(event)" id="modo1">
+                    <img src="https://www.bazarchinatown.com/11074-home_default/fichas-damas-chinas-blanco-y-negro-fichas-para-juegos.jpg" alt="" id="modo1">
+                    <h2>Un jugador</h2>
+                </aside>
+
+                <aside class="center">
+                    <img  src="" alt="" id="avatar" class="avatar" draggable="true" ondragstart="drag(event)">
+                    <h2 id="username"></h2>
+                    <button class="settings" id="button" ondrop="drop(event)" ondragover="allowDrop(event)" type="submit" onclick="location.href='/settings'">Settings</button>
+                </aside>
+
+                <aside class="derecha" ondrop="drop(event)" ondragstart="return false" ondragover="allowDrop(event)" id="modo2">
+                    <img src="https://www.bazarchinatown.com/11074-home_default/fichas-damas-chinas-blanco-y-negro-fichas-para-juegos.jpg" alt="" id="modo2">
+                    <h2>Dos jugadores</h2>
+                </aside>
+                
+            </div>
+        
+        </main>
+        <footer></footer>
+    </body>
+    <script src="./js/chooseMode.js"></script>
+</html>

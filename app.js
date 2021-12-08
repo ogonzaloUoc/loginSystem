@@ -11,6 +11,8 @@ const loginRoutes = require('./routes/loginRoutes')
 const registerRoutes = require('./routes/registerRoutes')
 const logoutRoutes = require('./routes/logoutRoutes')
 const userRoutes = require('./routes/userRoutes')
+const chooseModeRoutes = require('./routes/chooseModeRoutes')
+const settingsRoutes = require('./routes/settingsRoutes')
 
 const app = express();
 const server = http.createServer(app);
@@ -22,7 +24,7 @@ function init() {
     app.use(express.static(path.join(__dirname,'./public')));
 
     app.use(session({
-        name: "micookie",
+        name: "userSession",
         secret: "lascookiessonbuenas",
         cookie: {
         maxAge: 1000 * 60 * 60,
@@ -48,6 +50,8 @@ function routes() {
     app.use(registerRoutes)
     app.use(logoutRoutes)
     app.use(userRoutes)
+    app.use(chooseModeRoutes)
+    app.use(settingsRoutes)
 }
 
 function startListening() {

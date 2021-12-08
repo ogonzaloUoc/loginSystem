@@ -1,0 +1,84 @@
+body{
+    margin: 0px;
+}
+header{
+    background-color: #852747;
+    padding: 2%;
+    border: 2px solid black;
+}
+h1{
+    color: #FF7777;
+    text-align: center;
+}
+main{
+    background-image: url("../img/fondo1.jpg");
+    background-size: 100% 100%;
+    margin-left: auto;
+    margin-right: auto; 
+    height: 500px; 
+}
+.form{
+    border: 1px solid black;
+    background-color: #F5C6A5;
+    margin-left: 25%;
+    margin-right: 25%;
+}
+aside{
+    float: left;
+    width: 33.23%;
+    text-align: center;
+    margin-top: 7%;
+}
+.modo{
+    width: 80%;
+    height: 80%;
+}
+.avatar{
+    width: 50%;
+    height: 50%;
+    cursor: pointer;
+}.avatar:hover{
+    transform: scale(1.2);
+}
+.settings {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    margin-top: 10%;
+  }
+.settings{
+    width: 200px;
+    height: 85px;
+    border-radius: 80%;
+    background-color: #F5C6A5;
+    cursor: pointer;
+    font-size: large;
+    border: 2px solid black;
+}.settings:hover{
+    transform: scale(1.3);
+}
+.derecha{
+    background-color: #F5C6A5;
+    border: 1px solid black;
+    border-radius: 20%;
+}
+.izquierda{
+    background-color: #F5C6A5;
+    border: 1px solid black;
+    border-radius: 20%;
+}
+footer{
+    background-color: #852747;
+    height: 80px;
+    border: 2px solid black;
+}
+img{
+    margin-top: 5%;
+}
+#username{
+    text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
+}
+.tabla{
+    padding: 0px 20px 0px 20px !important;
+}

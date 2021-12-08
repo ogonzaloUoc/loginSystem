@@ -57,7 +57,7 @@ function renderRegisteredUsers(req, res) {
   res.render('users',  {
       users: sharedData.registeredUsersArray
   })
-}
+}  
 
   module.exports = {
     resctrictAccess,
