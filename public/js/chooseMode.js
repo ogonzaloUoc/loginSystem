@@ -48,15 +48,3 @@ function displayLoggedUserData() {
     document.getElementById("username").innerHTML = loggedUserUsername
     document.getElementById("avatar").src = loggedUserAvatar
 }
-
-function getItemByKey (key, array) {
-    var value;
-    array.some(function (obj) {
-        if (obj[key]) {
-            value = obj[key];
-            return true;
-        }
-        return false;
-    });
-    return value;
-}
