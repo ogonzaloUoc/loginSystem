@@ -31,7 +31,6 @@ async function obtainLoggedUserData() {
     } catch (e) {
         console.log('Booo');
     }
-    console.log("Src del avatar del usuario: " + loggedUserData[0].avatar)
     storeLoggedUserData()
     displayLoggedUserData()
 }

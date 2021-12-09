@@ -1,26 +1,14 @@
-var cookie = readCookie('session');
+var loggedUserUsername = sessionStorage.getItem("loggedUserUsername");
+var loggedUserEmail = sessionStorage.getItem("loggedUserEmail");
+var loggedUserAvatar = sessionStorage.getItem("loggedUserAvatar");
 
-function readCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i=0;i < ca.length;i++) {
-        var c = ca[i];
-        while (c.charAt(0)==' ') c = c.substring(1,c.length);
-        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-    }
-    return null;
-}
+console.log(loggedUserEmail)
 
-console.log("La cookie almacenada es: " + cookie)
-//console.log("El usuario almacenado en la cookie es: " + document.cookie.user)
+document.getElementById("avatar").src = loggedUserAvatar;
+document.getElementById("username").value = loggedUserUsername;
+document.getElementById("email").value = loggedUserUsername;
 
 /*
-var avatarPlayer = localStorage.getItem("avatar");
-document.getElementById("avatar").src = avatarPlayer;
-
-var valorUsername = localStorage.getItem("username");
-document.getElementById("namePlayer").value = valorUsername;
-
 var userInput = document.getElementById("userInput");
 userInput.addEventListener("keyup", function (event) {
     if (event.keycode === 13) {
