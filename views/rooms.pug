@@ -1,0 +1,39 @@
+doctype html
+html(lang='en')
+  head
+    title Available Roooms
+    link(rel='stylesheet' href='https://cdn.jsdelivr.net/npm/semantic-ui@2.3.3/dist/semantic.min.css')
+    script(defer src='/socket.io/socket.io.js')
+    script(defer src='./js/roomManagement.js')
+    style.
+      footer { margin: 35px 0 15px 0; text-align: center }
+  body
+    main#main
+        div#room-container
+        h1.ui.center.aligned.header Available Rooms
+        .ui.container
+            table#roomsTable.ui.celled.table.center.aligned         
+                thead
+                    tr    
+                    th Room Name       
+                    th Link            
+                tbody
+                for room in Object.keys(rooms)
+                    tr              
+                    td #{room} 
+                    td 
+                        a(href='/rooms/'+ room) Join Room
+                else
+                    li No rooms are available
+                tfoot
+                tr
+                    th(colspan='6')
+            form(action='/rooms/create_room', method='POST')
+                p                    
+                    input(name='room', type='text', value='' required)
+                    | 
+                    input(type='submit', value='New Room')
+                    
+
+    footer
+      p © #{new Date().getFullYear()} TOPJavaScripters
