@@ -1,27 +1,3 @@
-var loggedUserData = []
-
-obtainLoggedUserData()
-
-function allowDrop(ev) {
-    ev.preventDefault();
-}
-
-function drag(ev) {
-    console.log(ev.dataTransfer.setData("text", ev.target.id));
-}
-
-function drop(ev) {
-    if(ev.target.id == "modo1"){
-        window.location = "http://localhost:3000/juego.html";
-    }
-    else if(ev.target.id == "modo2"){
-        window.location = "http://localhost:3000/juego2.html";
-    }
-    else if(ev.target.id == "button"){
-        window.location = "/settings";
-    }
-}
-
 async function obtainLoggedUserData() {    
     try {
         var response = await fetch('/logged_user_data');
@@ -30,9 +6,7 @@ async function obtainLoggedUserData() {
         loggedUserData.push(data[0].user)
     } catch (e) {
         console.log('Booo');
-    }
-    storeLoggedUserData()
-    displayLoggedUserData()
+    }    
 }
 
 function storeLoggedUserData() {
@@ -47,4 +21,10 @@ function displayLoggedUserData() {
     
     document.getElementById("username").innerHTML = loggedUserUsername
     document.getElementById("avatar").src = loggedUserAvatar
+}
+
+export {
+    obtainLoggedUserData,
+    storeLoggedUserData,
+    displayLoggedUserData
 }

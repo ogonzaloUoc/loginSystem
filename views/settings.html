@@ -34,7 +34,7 @@
                 </div>			
     
                 <div>
-                    <label for="suggestedAvatars" class="form-label"><strong>Avatar</strong></label>
+                    <label for="suggestedAvatars" class="form-label"><strong>Available avatars</strong></label>
                     <div class="contenedor" >
                         <img onclick="changeAvatar(src)" src="./img/avatar1.png" alt="avatar1">
 						<img onclick="changeAvatar(src)" src="./img/avatar2.png" alt="avatar2">
@@ -45,15 +45,12 @@
                     </div>
                 </div>
                 <div>
-                    <p><strong>Avatar: </strong></p>
+                    <p><strong>Your avatar: </strong></p>
                     <img src="" id="avatar" class="avatar" alt="Selected Avatar">
                     <input type="hidden" id="avatarSrc" name="avatarSrc" value="http://localhost:3000/img/avatar1.png">
-                </div>
-                <div>
-                    <p><strong>Already have an account?</strong> <a href="/login">Click here</a></p> 
-                </div>
+                </div>            
                 <div class="button">
-                    <button type="submit" onclick="getInfoForm()" class="btn-lg btn-danger">Save!</button>
+                    <button type="submit" onclick="getInfoForm()" class="btn-lg btn-danger">Save Changes!</button>
                 </div>
     
             </form>
