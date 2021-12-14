@@ -39,8 +39,9 @@ app.post('/rooms/create_room', (req, res) => {
     io.emit('room-created', req.body.room)
 })
 
-app.get('rooms/:room', (req, res) => {
-    res.render('room', { roomName: req.params.room })
+app.get('/rooms/:room', (req, res) => {
+    res.sendFile(path.join(__dirname,'./views/blank.html'))
+    //res.render('room', { roomName: req.params.room })
 })
 
 function init() {

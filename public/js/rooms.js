@@ -11,7 +11,7 @@ socket.on('room-created', room => {
 
     var linkCell = newRow.insertCell()
     var roomLink = document.createElement('a')
-    roomLink.href = `/${room}`
+    roomLink.href = `/rooms/${room}`
     roomLink.innerText = 'Join Room'
     linkCell.appendChild(roomLink)
 })
