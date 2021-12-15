@@ -44,6 +44,14 @@ app.get('/rooms/:room', (req, res) => {
     //res.render('room', { roomName: req.params.room })
 })
 
+io.on('connection', socket => {
+    socket.on('new-user', (room, name) => {
+      socket.join(room)
+      rooms[room].users[socket.id] = name
+      socket.to(room).broadcast.emit('user-connected', name)
+    })
+})
+
 function init() {
     app.use(bodyParser.urlencoded({extended: false}));
     app.use(express.static(path.join(__dirname,'./public')));

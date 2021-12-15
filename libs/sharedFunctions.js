@@ -59,9 +59,18 @@ function renderRegisteredUsers(req, res) {
   })
 }  
 
+function userJoinRoom(id, username, room) {
+  const user = { id, username, room };
+
+  sharedData.users.push(user);
+
+  return user;
+}
+
   module.exports = {
     resctrictAccess,
     loadUsers,
     printRegisteredUsersToHtml,
-    renderRegisteredUsers
+    renderRegisteredUsers,
+    userJoinRoom
   }

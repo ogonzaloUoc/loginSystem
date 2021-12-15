@@ -1,5 +1,7 @@
 var registeredUsersArray = [];
+const users = [];
 
 module.exports = {
-    registeredUsersArray
+    registeredUsersArray,
+    users
 }

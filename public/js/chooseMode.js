@@ -1,6 +1,8 @@
-var loggedUserData = []
+var user = []
 
-obtainLoggedUserData()
+user = await obtainLoggedUserData()
+storeLoggedUserData()
+displayLoggedUserData()
 
 function allowDrop(ev) {
     ev.preventDefault();
@@ -24,21 +26,22 @@ function drop(ev) {
 
 async function obtainLoggedUserData() {    
     try {
-        var response = await fetch('/logged_user_data');
         var data = []
+        var loggedUserData = []
+        var response = await fetch('/logged_user_data');
+
         data.push((await response.json()))
         loggedUserData.push(data[0].user)
-    } catch (e) {
-        console.log('Booo');
+        return loggedUserData
+    } catch (error) {
+        console.log('There has been a problem with your fetch operation:', error);
     }
-    storeLoggedUserData()
-    displayLoggedUserData()
 }
 
 function storeLoggedUserData() {
-    sessionStorage.setItem('loggedUserUsername', loggedUserData[0].username)
-    sessionStorage.setItem('loggedUserEmail', loggedUserData[0].email)
-    sessionStorage.setItem('loggedUserAvatar', loggedUserData[0].avatar) 
+    sessionStorage.setItem('loggedUserUsername', user[0].username)
+    sessionStorage.setItem('loggedUserEmail', user[0].email)
+    sessionStorage.setItem('loggedUserAvatar', user[0].avatar) 
 }
 
 function displayLoggedUserData() {
