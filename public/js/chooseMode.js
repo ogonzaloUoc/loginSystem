@@ -30,8 +30,12 @@ async function obtainLoggedUserData() {
         var loggedUserData = []
         var response = await fetch('/logged_user_data');
 
+        if (!response.ok) {
+            throw new Error('Network response was not OK on fetch');
+        }
         data.push((await response.json()))
         loggedUserData.push(data[0].user)
+        
         return loggedUserData
     } catch (error) {
         console.log('There has been a problem with your fetch operation:', error);

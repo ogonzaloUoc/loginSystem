@@ -34,8 +34,8 @@ app.post('/rooms/create_room', (req, res) => {
         return res.redirect('/rooms')
     }
     rooms[req.body.room] = { users: {}}
+    // Can res redirect point to blank.html?
     res.redirect('/rooms/'+ req.body.room)
-    // Send message that new room was created
     io.emit('room-created', req.body.room)
 })
 
@@ -51,6 +51,8 @@ io.on('connection', socket => {
       socket.to(room).broadcast.emit('user-connected', name)
     })
 })
+
+startListening()
 
 function init() {
     app.use(bodyParser.urlencoded({extended: false}));
@@ -71,8 +73,6 @@ function init() {
     app.set('view engine', 'pug')
 
     routes()
-
-    startListening()
 
     sharedFunctions.loadUsers()
 }
