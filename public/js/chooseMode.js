@@ -1,8 +1,7 @@
 var user = []
 
 user = await obtainLoggedUserData()
-storeLoggedUserData()
-displayLoggedUserData()
+displayUsernameAndEmail(user)
 
 function allowDrop(ev) {
     ev.preventDefault();
@@ -42,16 +41,7 @@ async function obtainLoggedUserData() {
     }
 }
 
-function storeLoggedUserData() {
-    sessionStorage.setItem('loggedUserUsername', user[0].username)
-    sessionStorage.setItem('loggedUserEmail', user[0].email)
-    sessionStorage.setItem('loggedUserAvatar', user[0].avatar) 
-}
-
-function displayLoggedUserData() {
-    var loggedUserUsername = sessionStorage.getItem('loggedUserUsername')
-    var loggedUserAvatar = sessionStorage.getItem("loggedUserAvatar")
-    
-    document.getElementById("username").innerHTML = loggedUserUsername
-    document.getElementById("avatar").src = loggedUserAvatar
+function displayUsernameAndEmail(user) {
+    document.getElementById("username").innerHTML =  user[0].username
+    document.getElementById("avatar").src = user[0].avatar
 }
