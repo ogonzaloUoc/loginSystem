@@ -29,9 +29,8 @@ function displayLoggedUserData(user) {
     document.getElementById("avatarSrc").value = user[0].avatar; // avatar utilizado por bodyparser
 }
 
-function populateStorage() {
+function storeEmail() {
     localStorage.setItem('email', document.getElementById('email').value);
-    localStorage.setItem('password', document.getElementById('password').value);
 }
 
-saveButton.onclick = populateStorage;
+saveButton.onclick = storeEmail;

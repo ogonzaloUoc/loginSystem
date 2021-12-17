@@ -12,6 +12,16 @@ function resctrictAccess(req, res, next) {
   }
 }
 
+function updateSession(req, user) {
+  req.session.user =  user
+
+  req.session.save( err => {
+      req.session.reload( err => {
+        console.log('Session has been updated');
+      });
+    });
+}
+
 function printRegisteredUsersToConsole() {
   if (sharedData.registeredUsersArray !== undefined && sharedData.registeredUsersArray.length > 0) {
 
@@ -69,6 +79,7 @@ function userJoinRoom(id, username, room) {
 
   module.exports = {
     resctrictAccess,
+    updateSession,
     loadUsers,
     printRegisteredUsersToHtml,
     renderRegisteredUsers,

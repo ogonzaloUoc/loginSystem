@@ -47,16 +47,7 @@ function updateUser(req, indexOfUser) {
     \temail: ${sharedData.registeredUsersArray[indexOfUser].email}
     \tavatar: ${sharedData.registeredUsersArray[indexOfUser].avatar}\n`)
 
-    // Actualizar datos de session
-    req.session.user =  sharedData.registeredUsersArray[indexOfUser]
-
-    req.session.save( err => {
-        req.session.reload( err => {
-          console.log('Session has been updated');
-        });
-      });
-
-    // Es necesario actualizar localStorage?
+    sharedFunctions.updateSession(req, sharedData.registeredUsersArray[indexOfUser])    
 
     sharedFunctions.loadUsers()
 }
