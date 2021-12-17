@@ -1,7 +1,7 @@
 function changeAvatar(image_src) {
     var userAvatar = document.getElementById("avatar")
     var avatarInput = document.getElementById("avatarSrc")
-    userAvatar.src = image_src // Actualizamos imagen seleccionada
+    userAvatar.src = image_src // Actualizamos la imagen mostrada al usuario
     avatarInput.value = image_src // Actualizamos el valor del input, utilizado por el bodyparser
 }    
 

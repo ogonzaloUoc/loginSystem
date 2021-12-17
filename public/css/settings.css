@@ -49,7 +49,6 @@ img{
     height: 100px;
     display: block;
 }
-
 #item1{
     grid-column: 1/1;
 }
