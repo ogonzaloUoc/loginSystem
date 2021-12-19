@@ -17,7 +17,7 @@ function updateSession(req, user) {
 
   req.session.save( err => {
       req.session.reload( err => {
-        console.log('Session has been updated');
+        //console.log('Session has been updated\n');
       });
     });
 }

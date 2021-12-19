@@ -1,5 +1,7 @@
 const session = require('express-session');
 const FileSystem = require("fs")
+const path = require("path")
+const bcrypt = require('bcrypt') // Encriptado de contraseñas
 
 const sharedData = require('../libs/sharedData')
 const registeredUsersFile = './storage/users.json'
@@ -18,7 +20,7 @@ function updateUser_post(req, res) {
     try {
         const indexOfUser = sharedData.registeredUsersArray.findIndex(el => el.id === req.session.user.id);
         if(indexOfUser > -1) {
-            updateUser(req, indexOfUser)
+            updateUserRecord(req, indexOfUser)
             res.send(updateSuccessMessage)
             return
         }
@@ -29,7 +31,51 @@ function updateUser_post(req, res) {
     }
 }
 
-function updateUser(req, indexOfUser) {
+function updateUserPassword_get(req, res) {
+    res.sendFile(path.join(__dirname,'../views/updatePassword.html'))
+}
+
+/* TO DO:
+- separar en una funcion por tarea o acción
+- añadir comprobación campos en blanco
+*/
+async function updateUserPassword_post(req, res) {
+    const updatePasswordSuccessMessage = '<p>Password updated successfully</p> <meta http-equiv="refresh" content="3;url=/choosemode"/>'
+    const updatePasswordFailureMessage_ServerError = "Password update failed: Internal server error"
+    const updatePasswordFailureMessage_PasswordsDontMatch = '<p>Password update failed: password entered does not match our records</p> <meta http-equiv="refresh" content="3;url=/update_user_password"/>'
+    const updatePasswordFailureMessage_NewPasswordsDontMatch = '<p>Password update failed: new password doesn\'t match confirmation</p> <meta http-equiv="refresh" content="3;url=/update_user_password"/>'
+
+    try {
+        const indexOfUser = sharedData.registeredUsersArray.findIndex(el => el.id === req.session.user.id);
+
+        if(indexOfUser > -1) {            
+            const storedCurrentPassword = sharedData.registeredUsersArray[indexOfUser].password
+            const submittedCurrentPassword = req.body.current_password
+        
+            const passwordsMatch = bcrypt.compareSync(submittedCurrentPassword, storedCurrentPassword)            
+            
+            if(passwordsMatch) {
+                const newPassword = req.body.new_password
+                const confirmedNewPassword = req.body.confirmed_new_password
+        
+                if(newPassword == confirmedNewPassword) {                    
+                    storeNewPassword(req, indexOfUser, newPassword)
+                    res.send(updatePasswordSuccessMessage)
+                    return
+                }                  
+                res.send(updatePasswordFailureMessage_NewPasswordsDontMatch)
+                return
+            }
+            res.send(updatePasswordFailureMessage_PasswordsDontMatch)
+            return            
+        }
+        res.send(updatePasswordFailureMessage_ServerError)
+    } catch {
+        res.send(updatePasswordFailureMessage_ServerError)
+    }
+}
+
+function updateUserRecord(req, indexOfUser) {
     const oldUsername = sharedData.registeredUsersArray[indexOfUser].username
 
     sharedData.registeredUsersArray[indexOfUser].username = req.body.username
@@ -42,10 +88,29 @@ function updateUser(req, indexOfUser) {
         }
     });
 
-    console.log(`\nEl usuario ${oldUsername} ha actualizado su perfil : 
+    console.log(`El usuario ${oldUsername} ha actualizado su perfil:\n
     \tnombre de usuario: ${sharedData.registeredUsersArray[indexOfUser].username}, 
     \temail: ${sharedData.registeredUsersArray[indexOfUser].email}
     \tavatar: ${sharedData.registeredUsersArray[indexOfUser].avatar}\n`)
+
+    sharedFunctions.updateSession(req, sharedData.registeredUsersArray[indexOfUser])    
+
+    sharedFunctions.loadUsers()
+}
+
+async function storeNewPassword(req, indexOfUser, newPassword) {
+    const oldUsername = sharedData.registeredUsersArray[indexOfUser].username
+
+    let hashedPassword =  bcrypt.hashSync(newPassword, 10)
+    sharedData.registeredUsersArray[indexOfUser].password = hashedPassword
+                    
+    FileSystem.writeFile(registeredUsersFile, JSON.stringify(sharedData.registeredUsersArray), (cannotWriteFile) => {
+        if (cannotWriteFile) {
+            throw cannotWriteFile
+        }
+    });
+
+    console.log(`El usuario ${oldUsername} ha actualizado su contraseña\n`)
 
     sharedFunctions.updateSession(req, sharedData.registeredUsersArray[indexOfUser])    
 
@@ -56,5 +121,7 @@ function updateUser(req, indexOfUser) {
 
 module.exports = { 
     users_get,
-    updateUser_post
+    updateUser_post,
+    updateUserPassword_get,
+    updateUserPassword_post
 }

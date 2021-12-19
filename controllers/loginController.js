@@ -18,7 +18,7 @@ function login_post(req, res) {
             let submittedPass = req.body.password;
             let storedPass = foundUser.password;
     
-            const passwordsMatch = bcrypt.compare(submittedPass, storedPass); 
+            const passwordsMatch = bcrypt.compareSync(submittedPass, storedPass); 
 
             if (passwordsMatch) {
                 let username = foundUser.username;

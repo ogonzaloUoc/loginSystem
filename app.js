@@ -66,6 +66,7 @@ function init() {
         secure: false,
         httpOnly: true
         },
+        //rolling: true,
         resave: false,
         saveUninitialized: false
     } ));    
