@@ -1,5 +1,6 @@
 //const pug = require('pug') // View engine
 const FileSystem = require("fs")
+const path = require("path")
 
 const registeredUsersFile = './storage/users.json'
 var sharedData = require('./sharedData')
@@ -45,6 +46,7 @@ function parseRegisteredUsers() {
 }
 
 function loadUsers() {
+  ensureDirectoryExistence(registeredUsersFile)
   FileSystem.stat(registeredUsersFile, (fileNotExists, _stats) => {
       if (fileNotExists) {
           FileSystem.writeFileSync(registeredUsersFile, "[]", (cantWriteFile) => {
@@ -75,6 +77,15 @@ function userJoinRoom(id, username, room) {
   sharedData.users.push(user);
 
   return user;
+}
+
+function ensureDirectoryExistence(filePath) {
+  var dirname = path.dirname(filePath);
+  if (FileSystem.existsSync(dirname)) {
+    return true;
+  }
+  ensureDirectoryExistence(dirname);
+  FileSystem.mkdirSync(dirname);
 }
 
   module.exports = {
