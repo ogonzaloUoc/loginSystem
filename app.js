@@ -17,9 +17,11 @@ const settingsRoutes = require('./routes/settingsRoutes')
 const app = express();
 const server = http.createServer(app);
 
-const { Server } = require("socket.io");
+const { Server } = require("socket.io")
 const { response } = require('express')
-const io = new Server(server);
+const io = new Server(server)
+
+const port = process.env.PORT || 3000;
 
 init()
 
@@ -89,7 +91,7 @@ function routes() {
 }
 
 function startListening() {
-    server.listen(3000, function(){
-        console.log("server is listening on port: 3000\n");
+    server.listen(port, function(){
+        console.log(`server is listening on port: ${port}\n`);
     });
 }
