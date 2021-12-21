@@ -55,7 +55,7 @@ socket.on("move.made", function(data) {
         console.log('You won');
         return
     }
-    if (!isTheremovesAvailable(board)) {
+    if (!isThereMovesAvailable(board)) {
         console.log('Draw');
         return
     }
@@ -127,16 +127,18 @@ function getBoardState() {
 
 function isWinner(board) {
     return board.some(row => {
-        row == 'XXX' || row == 'OOO'
-    })
+        console.log(row);
+        return row.every(cell => cell == 'X' || cell == 'O' )
+        }
+    )
 }
 
-function isTheremovesAvailable(board) {
-    return board.some(row => {
-        row.some(cell => {
+function isThereMovesAvailable(board) {
+    return board.some(row => 
+        row.some(cell => 
             cell == ''
-        })
-    })
+        )
+    )
 }
 
 function renderTurnMessage() {
