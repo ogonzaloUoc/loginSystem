@@ -104,6 +104,14 @@ function getBoardState() {
     var board = [];
     var row = []
 
+    /*
+    [
+        ['','','O'],
+        ['','X',''],
+        ['','','X'],
+    ]
+    */
+
     $('.board button').each(function() {
         var buttonValue = $(this).text() || ''
         row.append(buttonValue)
