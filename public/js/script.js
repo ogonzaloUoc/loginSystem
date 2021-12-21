@@ -50,16 +50,14 @@ socket.on("move.made", function(data) {
     // means that now is opponent's turn
     myTurn = data.symbol !== symbol;
 
-    if (!isGameOver()) { // If game isn't over show who's turn is this
-        renderTurnMessage();
-    } else { // Else show win/lose message
-        if (myTurn) {
-            $("#message").text("You lost.");
-        } else {
-            $("#message").text("You won!");
-        }
-
-        $(".board button").attr("disabled", true); // Disable board
+    var board = getBoardState()
+    if (isWinner(board)) {
+        console.log('You won');
+        return
+    }
+    if (isDraw(board)) {
+        console.log('Draw');
+        return
     }
 });
 
@@ -103,43 +101,34 @@ function appendMessage(message) {
 }
 
 function getBoardState() {
-var obj = {};
+    var board = [];
+    var row = []
 
-/* We are creating an object where each attribute corresponds
-    to the name of a cell (r0c0, r0c1, ..., r2c2) and its value is
-    'X', 'O' or '' (empty).
-*/
-$(".board button").each(function() {
-    obj[$(this).attr("id")] = $(this).text() || "";
-});
+    $(".board button").each(function() {
+        var buttonValue = $(this).text() || ""
+        row.append(buttonValue)
+        if (row.length == 3) {
+            board.append(row)
+            row = []
+        }
+    });
 
-return obj;
+    return board;
 }
 
-function isGameOver() {
-    var state = getBoardState();
-    var matches = ["XXX", "OOO"]; // This are the string we will be looking for to declare the match over
+function isWinner(board) {
+    var winningRows = ['XXX', 'OOO']
+    return board.some(row => {
+        winningRows.some(wr => {
+            row == wr
+        })
+    })
+}
 
-    // We are creating a string for each possible winning combination of the cells
-    var rows = [
-    state.r0c0 + state.r0c1 + state.r0c2, // 1st line
-    state.r1c0 + state.r1c1 + state.r1c2, // 2nd line
-    state.r2c0 + state.r2c1 + state.r2c2, // 3rd line
-    state.r0c0 + state.r1c0 + state.r2c0, // 1st column
-    state.r0c1 + state.r1c1 + state.r2c1, // 2nd column
-    state.r0c2 + state.r1c2 + state.r2c2, // 3rd column
-    state.r0c0 + state.r1c1 + state.r2c2, // Primary diagonal
-    state.r0c2 + state.r1c1 + state.r2c0  // Secondary diagonal
-    ];
-
-    // Loop through all the rows looking for a match
-    for (var i = 0; i < rows.length; i++) {
-        if (rows[i] === matches[0] || rows[i] === matches[1]) {
-            return true;
-        }
-    }
-
-    return false;
+function isDraw(board) {
+    return !board.some(row => {
+        row == ''
+    })
 }
 
 function renderTurnMessage() {
