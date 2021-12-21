@@ -55,10 +55,11 @@ socket.on("move.made", function(data) {
         console.log('You won');
         return
     }
-    if (isDraw(board)) {
+    if (!isTheremovesAvailable(board)) {
         console.log('Draw');
         return
     }
+    renderTurnMessage()
 });
 
 // Bind event for game begin
@@ -114,9 +115,9 @@ function getBoardState() {
 
     $('.board button').each(function() {
         var buttonValue = $(this).text() || ''
-        row.append(buttonValue)
+        row.push(buttonValue)
         if (row.length == 3) {
-            board.append(row)
+            board.push(row)
             row = []
         }
     });
@@ -130,9 +131,11 @@ function isWinner(board) {
     })
 }
 
-function isDraw(board) {
-    return !board.some(row => {
-        row == ''
+function isTheremovesAvailable(board) {
+    return board.some(row => {
+        row.some(cell => {
+            cell == ''
+        })
     })
 }
 
