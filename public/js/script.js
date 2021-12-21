@@ -126,10 +126,12 @@ function getBoardState() {
 }
 
 function isWinner(board) {
-    return board.some(row => {
-        console.log(row);
-        return row.every(cell => cell == 'X' || cell == 'O' )
-        }
+    var rows = board
+    var columns = board[0].map((_, colIndex) => board.map(row => row[colIndex]));
+    
+    var toCheck = rows.concat(columns)
+    return toCheck.some(row => 
+        row.every(cell => cell == 'X') || row.every(cell => cell == 'O')
     )
 }
 
