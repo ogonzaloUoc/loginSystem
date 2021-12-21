@@ -104,8 +104,8 @@ function getBoardState() {
     var board = [];
     var row = []
 
-    $(".board button").each(function() {
-        var buttonValue = $(this).text() || ""
+    $('.board button').each(function() {
+        var buttonValue = $(this).text() || ''
         row.append(buttonValue)
         if (row.length == 3) {
             board.append(row)
@@ -117,11 +117,8 @@ function getBoardState() {
 }
 
 function isWinner(board) {
-    var winningRows = ['XXX', 'OOO']
     return board.some(row => {
-        winningRows.some(wr => {
-            row == wr
-        })
+        row == 'XXX' || row == 'OOO'
     })
 }
 
