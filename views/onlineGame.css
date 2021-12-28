@@ -25,14 +25,9 @@ article{
     margin-right: 40%;
     padding-bottom: 70%;
 }
-#button-container {
-    margin-left: 40%;
-    margin-right: 40%;
-    padding-bottom: 70%;
-}
 footer{
     background-color: #852747;
-    height: 10%;
+    height: 20%;
     position: fixed;
     bottom: 0;
     width: 100%;

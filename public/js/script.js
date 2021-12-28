@@ -1,7 +1,7 @@
 var socket = io()
 
-const roomsTable = document.getElementById('roomsTable') 
-const messageContainer = document.getElementById('message-container')   
+const roomsTable = document.getElementById('rooms-table') 
+const messageContainer = document.getElementById('message-container')  
 
 var myTurn = true;
 var symbol;
@@ -35,7 +35,9 @@ socket.on('room-created', room => {
 })
 
 socket.on('user-connected', name => {
-    appendMessage(`${name} connected`)
+    console.log(`The user: ${name} has connected.\n`)
+    //console.log('Room: ' + room)
+    //appendMessage(`${name} connected`)
 })
 
 socket.on('user-disconnected', name => {
@@ -49,17 +51,24 @@ socket.on("move.made", function(data) {
     // If the symbol of the last move was the same as the current player
     // means that now is opponent's turn
     myTurn = data.symbol !== symbol;
-
     var board = getBoardState()
+    
     if (isWinner(board)) {
-        console.log('You won');
+        if (myTurn) {
+            $("#message").text("You lost.");
+        } else {
+            $("#message").text("You won!");
+        }
+        $(".board button").attr("disabled", true); // Disable board  
+        socket.emit('game.end')      
         return
     }
     if (!isThereMovesAvailable(board)) {
-        console.log('Draw');
+        $("#message").text("Draw!");
+        $(".board button").attr("disabled", true); // Disable board        
         return
     }
-    renderTurnMessage()
+    renderTurnMessage()    
 });
 
 // Bind event for game begin
@@ -105,14 +114,6 @@ function getBoardState() {
     var board = [];
     var row = []
 
-    /*
-    [
-        ['','','O'],
-        ['','X',''],
-        ['','','X'],
-    ]
-    */
-
     $('.board button').each(function() {
         var buttonValue = $(this).text() || ''
         row.push(buttonValue)
@@ -124,13 +125,15 @@ function getBoardState() {
 
     return board;
 }
-
+    
 function isWinner(board) {
     var rows = board
     var columns = board[0].map((_, colIndex) => board.map(row => row[colIndex]));
+    var diagonalLeftToRight = [[ board[0][0], board[1][1], board[2][2] ]]
+    var diagonalRightToLeft = [[ board[0][2], board[1][1], board[2][0] ]]
     
-    var toCheck = rows.concat(columns)
-    return toCheck.some(row => 
+    var toCheck = rows.concat(columns, diagonalLeftToRight, diagonalRightToLeft)
+    return toCheck.some(row =>         
         row.every(cell => cell == 'X') || row.every(cell => cell == 'O')
     )
 }
