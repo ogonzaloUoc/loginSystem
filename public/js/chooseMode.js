@@ -3,8 +3,27 @@ var user = []
 user = await obtainLoggedUserData()
 displayUsernameAndEmail(user)
 
+document.getElementById('avatar').addEventListener('dragstart', drag)
+
+const settingsButton = document.getElementById('settingsButton')
+settingsButton.addEventListener('drop', drop)
+settingsButton.addEventListener('dragover', allowDrop)
+settingsButton.addEventListener('click', () => {location.href='/settings'})
+//onclick="location.href='/settings'"
+
+const modoLocal = document.getElementById('modoLocal')
+modoLocal.addEventListener('drop', drop)
+modoLocal.addEventListener('dragstart', () => { return false })
+modoLocal.addEventListener('dragover', allowDrop)
+
+const modoOnline = document.getElementById('modoOnline')
+modoOnline.addEventListener('drop', drop)
+modoOnline.addEventListener('dragstart', () => { return false })
+modoOnline.addEventListener('dragover', allowDrop)
+
 function allowDrop(ev) {
     ev.preventDefault();
+    ev.dataTransfer.effectAllowed = "move";
 }
 
 function drag(ev) {
@@ -12,14 +31,16 @@ function drag(ev) {
 }
 
 function drop(ev) {
-    if(ev.target.id == "modo1"){
-        window.location = "http://localhost:3000/juego.html";
+    ev.preventDefault();
+
+    if(ev.target.id == 'modoLocal'){
+        window.location = 'http://localhost:3000/juego.html';
     }
-    else if(ev.target.id == "modo2"){
-        window.location = "http://localhost:3000/juego2.html";
+    else if(ev.target.id == 'modoOnline'){
+        window.location = '/rooms';
     }
-    else if(ev.target.id == "button"){
-        window.location = "/settings";
+    else if(ev.target.id == 'settingsButton'){
+        window.location.href = '/settings';
     }
 }
 
