@@ -1,7 +1,7 @@
 var socket = io()
 
 const roomsTable = document.getElementById('rooms-table') 
-const messageContainer = document.getElementById('message-container')  
+const messageContainer = document.getElementById('message-container')
 
 var myTurn = true;
 var symbol;
@@ -11,6 +11,8 @@ if(roomsTable == null) {
     const roomName = window.location.pathname.split('/').pop()
     const username = await getLoggedUserUsername()
     socket.emit('new-player', roomName, username)
+
+    document.getElementById('reset-board').addEventListener('click', resetBoard)
 
     // Binding buttons on the board
     $(function() {
@@ -124,6 +126,12 @@ function getBoardState() {
     });
 
     return board;
+}
+
+function resetBoard() {
+    $('.board button').each(function() {
+        $(this).text('')
+    })
 }
     
 function isWinner(board) {
