@@ -1,7 +1,7 @@
 var socket = io()
 
-const roomsTable = document.getElementById('roomsTable') 
-const messageContainer = document.getElementById('message-container')   
+const roomsTable = document.getElementById('rooms-table') 
+const messageContainer = document.getElementById('message-container')
 
 var myTurn = true;
 var symbol;
@@ -11,6 +11,8 @@ if(roomsTable == null) {
     const roomName = window.location.pathname.split('/').pop()
     const username = await getLoggedUserUsername()
     socket.emit('new-player', roomName, username)
+
+    document.getElementById('reset-board').addEventListener('click', resetBoard)
 
     // Binding buttons on the board
     $(function() {
@@ -35,7 +37,9 @@ socket.on('room-created', room => {
 })
 
 socket.on('user-connected', name => {
-    appendMessage(`${name} connected`)
+    console.log(`The user: ${name} has connected.\n`)
+    //console.log('Room: ' + room)
+    //appendMessage(`${name} connected`)
 })
 
 socket.on('user-disconnected', name => {
@@ -49,18 +53,24 @@ socket.on("move.made", function(data) {
     // If the symbol of the last move was the same as the current player
     // means that now is opponent's turn
     myTurn = data.symbol !== symbol;
-
-    if (!isGameOver()) { // If game isn't over show who's turn is this
-        renderTurnMessage();
-    } else { // Else show win/lose message
+    var board = getBoardState()
+    
+    if (isWinner(board)) {
         if (myTurn) {
             $("#message").text("You lost.");
         } else {
             $("#message").text("You won!");
         }
-
-        $(".board button").attr("disabled", true); // Disable board
+        $(".board button").attr("disabled", true); // Disable board  
+        socket.emit('game.end')      
+        return
     }
+    if (!isThereMovesAvailable(board)) {
+        $("#message").text("Draw!");
+        $(".board button").attr("disabled", true); // Disable board        
+        return
+    }
+    renderTurnMessage()    
 });
 
 // Bind event for game begin
@@ -103,43 +113,45 @@ function appendMessage(message) {
 }
 
 function getBoardState() {
-var obj = {};
+    var board = [];
+    var row = []
 
-/* We are creating an object where each attribute corresponds
-    to the name of a cell (r0c0, r0c1, ..., r2c2) and its value is
-    'X', 'O' or '' (empty).
-*/
-$(".board button").each(function() {
-    obj[$(this).attr("id")] = $(this).text() || "";
-});
+    $('.board button').each(function() {
+        var buttonValue = $(this).text() || ''
+        row.push(buttonValue)
+        if (row.length == 3) {
+            board.push(row)
+            row = []
+        }
+    });
 
-return obj;
+    return board;
 }
 
-function isGameOver() {
-    var state = getBoardState();
-    var matches = ["XXX", "OOO"]; // This are the string we will be looking for to declare the match over
+function resetBoard() {
+    $('.board button').each(function() {
+        $(this).text('')
+    })
+}
+    
+function isWinner(board) {
+    var rows = board
+    var columns = board[0].map((_, colIndex) => board.map(row => row[colIndex]));
+    var diagonalLeftToRight = [[ board[0][0], board[1][1], board[2][2] ]]
+    var diagonalRightToLeft = [[ board[0][2], board[1][1], board[2][0] ]]
+    
+    var toCheck = rows.concat(columns, diagonalLeftToRight, diagonalRightToLeft)
+    return toCheck.some(row =>         
+        row.every(cell => cell == 'X') || row.every(cell => cell == 'O')
+    )
+}
 
-    // We are creating a string for each possible winning combination of the cells
-    var rows = [
-    state.r0c0 + state.r0c1 + state.r0c2, // 1st line
-    state.r1c0 + state.r1c1 + state.r1c2, // 2nd line
-    state.r2c0 + state.r2c1 + state.r2c2, // 3rd line
-    state.r0c0 + state.r1c0 + state.r2c0, // 1st column
-    state.r0c1 + state.r1c1 + state.r2c1, // 2nd column
-    state.r0c2 + state.r1c2 + state.r2c2, // 3rd column
-    state.r0c0 + state.r1c1 + state.r2c2, // Primary diagonal
-    state.r0c2 + state.r1c1 + state.r2c0  // Secondary diagonal
-    ];
-
-    // Loop through all the rows looking for a match
-    for (var i = 0; i < rows.length; i++) {
-        if (rows[i] === matches[0] || rows[i] === matches[1]) {
-            return true;
-        }
-    }
-
-    return false;
+function isThereMovesAvailable(board) {
+    return board.some(row => 
+        row.some(cell => 
+            cell == ''
+        )
+    )
 }
 
 function renderTurnMessage() {

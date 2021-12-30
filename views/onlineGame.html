@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <title>OnlineGame</title>
     <link rel="stylesheet" href="../css/onlineGame.css">
+    <!--<link rel="stylesheet" href="./onlineGame.css">-->
 </head>
 <body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -30,10 +31,58 @@
             font-size: 3rem;
             margin-bottom: 1rem;
             text-align: center;
+        }                
+        #wrap {
+            width:750px;
+            margin:0 auto;
+            top: 0%;
+            background:#99c;
+            text-align: center;
+        }        
+        #header {
+            background:#ddd;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }   
+        #left-side {
+            float:left;
+            width:350px;
+            background:#9c9;
+        }
+        #player1, #player2 {
+            font-size: 2rem;
+        }
+        #right-side {
+            float:right;
+            width:350px;
+            background:#c9c;
         }
     </style>
     <header>
         <h1>Welcome to the battlefield!</h1>
+        <!--
+        <div type="hidden" id="wrap">
+            <div id="header">
+                Scoreboard
+            </div>      	 
+            <div id="left-side">
+                <div id="player1">
+                    Player 1
+                </div>
+                <div id="player1-score">
+                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit...</p>
+                </div>
+            </div>
+            <div id="right-side">
+                <div id="player2">
+                    Player 2
+                </div>
+                <div id="player2-score">
+                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit...</p>
+                </div>    	
+            </div>
+        </div>
+        --> 
     </header>   
     <main>
         <div class="base">
@@ -45,20 +94,20 @@
                         <button id="r2c0"></button> <button id="r2c1"></button> <button id="r2c2"></button>
                     </div>
             </div>    
-            <article>
-                <div class="button">
+            <article>                
+                <div class="button">                    
+                    <!--
                     <button onclick="window.location.href='../Vista/juego.html';">
                         Go back
-                    </button>
+                    </button>     
+                    -->     
+                    <button id="reset-board">
+                        Reset Board
+                    </button>   
                 </div>
             </article>
-        </div>
-        
-    </main>
-    
-    <footer>
-
-    </footer>
-    
+        </div>        
+    </main>        
+    <footer></footer>    
 </body>
 </html>

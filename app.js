@@ -4,6 +4,9 @@ const path = require("path")
 const bodyParser = require('body-parser') // Access info from requests
 const session = require('express-session') // Librería para la gestión de sesiones de usuarios
 
+const { Room } = require('./models/room')
+const { Player } = require('./models/player')
+
 const sharedFunctions = require('./libs/sharedFunctions')
 
 const homeRoutes = require('./routes/homeRoutes')
@@ -40,16 +43,20 @@ app.get('/rooms/:room', (req, res) => {
     //res.render('room', { roomName: req.params.room })
 })
 
-const rooms = {}
+var rooms = {}
 var players = {}; // opponent: scoket.id of the opponent, symbol = "X" | "O", socket: player's socket
 var unmatched;
+
+var opponentSocket
+var newRoom
+var firstPlayer
 
 io.on('connection', socket => {
     socket.on('new-player', (room, username) => {
         socket.join(room)
         rooms[room].users[socket.id] = username
         //socket.to(room).emit('user-connected', username)
-        //socket.to(room).broadcast.emit('user-connected', username)
+        //socket.to(room).broadcast.emit('user-connected', username)               
 
         join(socket); // Fill 'players' data structure
 
@@ -75,13 +82,13 @@ io.on('connection', socket => {
             socket.emit("move.made", data); // Emit for the player who made the move
             opponentOf(socket).emit("move.made", data); // Emit for the opponent
         });
-
+        
         // Event to inform player that the opponent left
         socket.on("disconnect", function() {
             if (opponentOf(socket)) {
             opponentOf(socket).emit("opponent.left");
             }
-        });
+        });                    
     })
 })
 
@@ -127,7 +134,23 @@ function startListening() {
     });
 }
 
-function join(socket) {
+function setup(room, username, socket) {
+    if(opponentSocket === undefined) {
+        newRoom = new Room(room)
+        firstPlayer = new Player(username, undefined, 'X', socket)
+
+        newRoom.addPlayer(firstPlayer)
+        rooms[room] = newRoom
+
+        opponentSocket = socket.id 
+    } else {             
+        var secondPlayer = new Player(username, opponentSocket, 'O', socket)
+        newRoom.addPlayer(secondPlayer)
+        firstPlayer.setOpponentSocket(socket)      
+    }        
+}
+
+function join(socket) {       
     players[socket.id] = {
         opponent: unmatched,
         symbol: "X",
