@@ -3,9 +3,21 @@ const FileSystem = require("fs")
 const path = require("path")
 const bcrypt = require('bcrypt') // Encriptado de contraseñas
 
+const User_BBDD = require('../models/User_BBDD')
+
 const sharedData = require('../libs/sharedData')
 const registeredUsersFile = './storage/users.json'
 const sharedFunctions = require('../libs/sharedFunctions')
+
+function users_get_bbdd(req, res) {
+    User_BBDD.find({}, function(err, result) {
+        if (err) {
+          console.log(err);
+          return
+        } 
+        res.json(result);        
+    });
+}
 
 function users_get(req, res) {
     res.render('users',  {
@@ -121,6 +133,7 @@ async function storeNewPassword(req, indexOfUser, newPassword) {
 
 module.exports = { 
     users_get,
+    users_get_bbdd,
     updateUser_post,
     updateUserPassword_get,
     updateUserPassword_post

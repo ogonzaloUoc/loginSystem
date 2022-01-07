@@ -6,6 +6,7 @@ const sharedFunctions = require('../libs/sharedFunctions')
 const router = express.Router()
 
 router.get('/users', sharedFunctions.resctrictAccess, usersController.users_get)
+router.get('/users_bbdd', usersController.users_get_bbdd)
 router.post('/update_user', sharedFunctions.resctrictAccess, usersController.updateUser_post)
 router.get('/update_user_password', sharedFunctions.resctrictAccess, usersController.updateUserPassword_get)
 router.post('/update_user_password', sharedFunctions.resctrictAccess, usersController.updateUserPassword_post)
