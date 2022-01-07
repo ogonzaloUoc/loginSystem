@@ -2,6 +2,8 @@ const path = require("path")
 const FileSystem = require("fs")
 const bcrypt = require('bcrypt') // Encriptado de contraseñas
 
+const User_BBDD = require('../models/User_BBDD')
+
 const { User } = require('../models/user')
 const registeredUsersFile = './storage/users.json'
 const sharedFunctions = require('../libs/sharedFunctions')
@@ -10,6 +12,10 @@ var sharedData = require('../libs/sharedData')
 
 function register_get(_req, res) {
     res.sendFile(path.join(__dirname,'../views/register.html'))
+}
+
+function register_get_BBDD(_req, res) {
+    res.sendFile(path.join(__dirname,'../views/registerBBDD.html'))
 }
 
 async function register_post(req, res) {
@@ -51,7 +57,32 @@ async function saveUser(req) {
     sharedFunctions.loadUsers()
 }
 
+async function register_post_BBDD(req, res) {
+    let hashedPassword = await bcrypt.hash(req.body.password, 10)
+
+    userDetail = { 
+        username: req.body.username,
+        email: req.body.email,
+        password: hashedPassword,
+        avatar: req.body.avatarSrc
+    }
+
+    const user = new User_BBDD(userDetail);
+         
+    user.save(function (err) {
+      if (err) {
+        console.error(err)
+        return;
+      }
+      console.log('New user: '+user);      
+      res.status(202)
+      res.sendFile(path.join(__dirname,'../views/login.html'))
+    });
+}
+
 module.exports = {
     register_get,
-    register_post
+    register_get_BBDD,
+    register_post,
+    register_post_BBDD
 }

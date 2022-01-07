@@ -7,6 +7,8 @@ const session = require('express-session') // Librería para la gestión de sesi
 const { Room } = require('./models/room')
 const { Player } = require('./models/player')
 
+const connectDB = require('./connectDB')
+
 const sharedFunctions = require('./libs/sharedFunctions')
 
 const homeRoutes = require('./routes/homeRoutes')
@@ -116,6 +118,8 @@ function init() {
     routes()
 
     sharedFunctions.loadUsers()
+
+    connectDB()
 }
 
 function routes() {    
@@ -132,22 +136,6 @@ function startListening() {
     server.listen(port, function(){
         console.log(`server is listening on port: ${port}\n`);
     });
-}
-
-function setup(room, username, socket) {
-    if(opponentSocket === undefined) {
-        newRoom = new Room(room)
-        firstPlayer = new Player(username, undefined, 'X', socket)
-
-        newRoom.addPlayer(firstPlayer)
-        rooms[room] = newRoom
-
-        opponentSocket = socket.id 
-    } else {             
-        var secondPlayer = new Player(username, opponentSocket, 'O', socket)
-        newRoom.addPlayer(secondPlayer)
-        firstPlayer.setOpponentSocket(socket)      
-    }        
 }
 
 function join(socket) {       
