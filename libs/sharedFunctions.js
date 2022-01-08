@@ -26,13 +26,13 @@ function updateSession(req, user) {
 function printRegisteredUsersToConsole() {
   if (sharedData.registeredUsersArray !== undefined && sharedData.registeredUsersArray.length > 0) {
 
-      console.log('Usuarios registrados:\n')
+      console.log('Usuarios registrados (JSON):\n')
       sharedData.registeredUsersArray.forEach(user => {
           console.log(`\t${user.username}: ${user.email}`)
       })
       return
   }  
-  console.log('Todavia no hay usuarios registrados\n')
+  console.log('Todavia no hay usuarios registrados (JSON).\n')
 }
 
 function parseRegisteredUsers() {

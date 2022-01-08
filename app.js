@@ -7,7 +7,7 @@ const session = require('express-session') // Librería para la gestión de sesi
 const { Room } = require('./models/room')
 const { Player } = require('./models/player')
 
-const connectDB = require('./connectDB')
+const bbddConnection = require('./bbddConnection')
 
 const sharedFunctions = require('./libs/sharedFunctions')
 
@@ -119,7 +119,7 @@ function init() {
 
     sharedFunctions.loadUsers()
 
-    connectDB()
+    bbddConnection()
 }
 
 function routes() {    

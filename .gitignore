@@ -1,3 +1,4 @@
 node_modules
 storage/users.json
 .vscode
+bbddConnectionHelper.js

@@ -9,7 +9,7 @@ var userArgs = process.argv.slice(2);
 const async = require('async')  
 const mongoose = require('mongoose');
 
-const connectDB = require('./connectDB')
+const bbddConnection = require('./bbddConnection')
 const User = require('./models/User_BBDD')
 
 var mongoDB = userArgs[0];
@@ -48,7 +48,7 @@ function createUsers(cb) {
         cb);
 }
 
-connectDB()
+bbddConnection()
   .then(() => {
     async.series([
         createUsers

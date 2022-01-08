@@ -49,7 +49,7 @@ async function saveUser(req) {
         }
     });
 
-    console.log(`\nUn nuevo usuario se ha registrado: 
+    console.log(`\nUn nuevo usuario se ha registrado (JSON): 
     \n\tnombre de usuario: ${newUser.username}, 
     \n\temail: ${newUser.email}
     \n\tavatar: ${newUser.avatar}\n`)
@@ -74,7 +74,7 @@ async function register_post_BBDD(req, res) {
         console.error(err)
         return;
       }
-      console.log('New user: '+user);      
+      console.log('Un nuevo usuario se ha registrado (BBDD):'+user);      
       res.status(202)
       res.sendFile(path.join(__dirname,'../views/login.html'))
     });
