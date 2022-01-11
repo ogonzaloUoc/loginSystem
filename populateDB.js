@@ -59,7 +59,7 @@ bbddConnection()
             console.log('FINAL ERR: '+err);
         }
         else {
-            console.log('Users: '+users);
+            console.log('Added users: '+users);
             
         }
         // All done, disconnect from database

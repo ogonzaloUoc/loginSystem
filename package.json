@@ -15,6 +15,7 @@
   "author": "Oriol Gonzalo\u001b[H",
   "license": "ISC",
   "dependencies": {
+    "async": "^3.2.3",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
